@@ -248,6 +248,10 @@ Successfully built 4b580df91925
 Successfully tagged ashuapp:imgv1
 ```
 
+### docker run 
+
+<img src="run.png">
+
 
 
 
