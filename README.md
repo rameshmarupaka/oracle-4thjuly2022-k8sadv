@@ -278,5 +278,141 @@ cdb962ef02ed        vinodapp:imgv2
 ```
 
 
+### docker compose for docker cli scripting 
+
+<img src="compose.png">
+
+### lets clean up 
+
+```
+[ashu@docker-server webapp]$ docker kill ashuc2
+ashuc2
+[ashu@docker-server webapp]$ docker  rm  ashuc2 
+ashuc2
+[ashu@docker-server webapp]$ 
+
+
+[ashu@docker-server webapp]$ docker  rmi  ashuapp:imgv1 
+Untagged: ashuapp:imgv1
+[ashu@docker-server webapp]$ docker  rmi  ashuapp:imgv2
+Untagged: ashuapp:imgv2
+Deleted: sha256:6ebfd93106b2e9eaefa1ce02c00e11441e90ca86813c90c940949cb12f4b5291
+Deleted: sha256:72cab716382d21f596360e0d5e27e2645693f3e79e7069a57778b0f841e3c992
+[ashu@docker-server webapp]$ 
+
+```
+
+### compsoe client side tool 
+
+### installation 
+
+```
+curl -SL https://github.com/docker/compose/releases/download/v2.6.1/docker-compose-linux-x86_64 -o /usr/bin/docker-compose 
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+100 24.5M  100 24.5M    0     0  18.3M      0  0:00:01  0:00:01 --:--:-- 43.2M
+[root@docker-server ~]# 
+[root@docker-server ~]# chmod +x /usr/bin/docker-compose 
+[root@docker-server ~]# docker-compose -v
+Docker Compose version v2.6.1
+[root@docker-server ~]# 
+
+```
+
+### to use compsoe lets understanding docker components 
+
+### networking 
+
+<img src="net.png">
+
+### checking networking 
+
+```
+[ashu@docker-server webapp]$ docker  network ls
+NETWORK ID          NAME                DRIVER              SCOPE
+eb903769f600        bridge              bridge              local
+19d30894d86c        host                host                local
+47aaf11e6e6c        none                null                local
+[ashu@docker-server webapp]$ docker  network inspect bridge 
+[
+    {
+        "Name": "bridge",
+        "Id": "eb903769f600c6e2b9e5333bea47b85a137f6994c183713624ea76d697e9d514",
+        "Created": "2022-07-04T05:06:46.383066967Z",
+        "Scope": "local",
+        "Driver": "bridge",
+        "EnableIPv6": false,
+        "IPAM": {
+            "Driver": "default",
+            "Options": null,
+            "Config": [
+                {
+                    "Subnet": "172.17.0.0/16"
+                }
+```
+
+### compose file example 1 
+
+```
+version: '3.8' # file version 
+services:
+  ashuapp1: # name of app used by compose 
+    image: ashuapp:imgv3 # name of image to be build
+    build: . # location of dockerfile 
+    container_name: ashuc3 
+    ports:
+    - "1234:80"
+```
+
+### lets run it 
+
+```
+[ashu@docker-server ashuwebapp]$ ls
+docker-compose.yaml  Dockerfile  html-sample-app
+[ashu@docker-server ashuwebapp]$ docker-compose up -d 
+[+] Running 0/1
+ ⠧ ashuapp1 Pulling                                                                                                  0.7s
+[+] Building 1.0s (7/7) FINISHED                                                                                          
+ => [internal] load build definition from Dockerfile                                                                 0.0s
+ => => transferring dockerfile: 343B                                                                                 0.0s
+ => [internal] load .dockerignore                                                                                    0.0s
+ => => transferring context: 174B                                                                                    0.0s
+ => [internal] load metadata for docker.io/library/nginx:latest                                                      0.0s
+ => [internal] load build context                                                                                    0.0s
+ => => transferring context: 2.05MB                                                                                  0.0s
+ => [1/2] FROM docker.io/library/nginx                                                                               0.0s
+ => => resolve docker.io/library/nginx:latest                                                                        0.0s
+ => [2/2] COPY html-sample-app /usr/share/nginx/html/                                                                0.0s
+ => exporting to image                                                                                               0.8s
+ => => exporting layers                                                                                              0.8s
+ => => writing image sha256:8addb4e190a241e9b3c26807860248dc4989c0d91b7ab364e5715b6aa8ba1b06                         0.0s
+ => => naming to docker.io/library/ashuapp:imgv3                                                                     0.0s
+[+] Running 2/2
+ ⠿ Network ashuwebapp_default  Created                                                                               0.1s
+ ⠿ Container ashuc3            Started    
+```
+
+### more commands 
+
+```
+[ashu@docker-server ashuwebapp]$ docker-compose  ps
+NAME                COMMAND                  SERVICE             STATUS              PORTS
+ashuc3              "/docker-entrypoint.…"   ashuapp1            running             0.0.0.0:1234->80/tcp
+[ashu@docker-server ashuwebapp]$ docker-compose  images
+Container           Repository          Tag                 Image Id            Size
+ashuc3              ashuapp             imgv3               8addb4e190a2        144MB
+```
+
+### cleanup 
+
+```
+[ashu@docker-server ashuwebapp]$ docker-compose down 
+[+] Running 2/2
+ ⠿ Container ashuc3            Removed                                                                               0.5s
+ ⠿ Network ashuwebapp_default  Removed   
+```
+
+
 
 
