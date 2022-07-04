@@ -413,6 +413,77 @@ ashuc3              ashuapp             imgv3               8addb4e190a2        
  ⠿ Network ashuwebapp_default  Removed   
 ```
 
+### Example 2 for compsoe :-
+
+```
+version: '3.8' # file version 
+services:
+  ashuapp2: 
+    image: alpine
+    container_name: ashuc2
+    command: ping www.google.com 
+  ashuapp1: # name of app used by compose 
+    image: ashuapp:imgv3 # name of image to be build
+    build: . # location of dockerfile 
+    container_name: ashuc3 
+    ports:
+    - "1234:80"
+```
+
+###
+
+```
+[ashu@docker-server ashuwebapp]$ docker-compose up -d  --build  
+[+] Building 0.0s (7/7) FINISHED                                                                                          
+ => [internal] load build definition from Dockerfile                                                                 0.0s
+ => => transferring dockerfile: 91B                                                                                  0.0s
+ => [internal] load .dockerignore                                                                                    0.0s
+ => => transferring context: 93B                                                                                     0.0s
+ => [internal] load metadata for docker.io/library/nginx:latest                                                      0.0s
+ => [internal] load build context                                                                                    0.0s
+ => => transferring context: 8.33kB                                                                                  0.0s
+ => [1/2] FROM docker.io/library/nginx                                                                               0.0s
+ => CACHED [2/2] COPY html-sample-app /usr/share/nginx/html/                                                         0.0s
+ => exporting to image                                                                                               0.0s
+ => => exporting layers                                                                                              0.0s
+ => => writing image sha256:8addb4e190a241e9b3c26807860248dc4989c0d91b7ab364e5715b6aa8ba1b06                         0.0s
+ => => naming to docker.io/library/ashuapp:imgv3                                                                     0.0s
+[+] Running 2/2
+ ⠿ Container ashuc3  Started                                                                                         0.5s
+ ⠿ Container ashuc2  Running      
+```
+
+### clean up again 
+
+```
+[ashu@docker-server ashuwebapp]$ docker-compose down 
+[+] Running 3/3
+ ⠿ Container ashuc3            Removed                                                                               0.5s
+ ⠿ Container ashuc2            Removed                                                                              10.4s
+ ⠿ Network ashuwebapp_default  Removed                                                                               0.1s
+[ashu@docker-server ashuwebapp]$ 
+```
+
+### Example 3 : 
+
+```
+version: '3.8' # file version 
+services:
+  ashuapp2: 
+    image: alpine # image from docker hub 
+    container_name: ashuc2
+    command: ping www.google.com 
+  ashuapp1: # name of app used by compose 
+    image: ashuapp:imgv3 # name of image to be build
+    build:  # total build details 
+      context: . # location of dockerfile 
+      dockerfile: project.dockerfile # name of dockerfile
+    container_name: ashuc3 
+    ports:
+    - "1239:80"
+
+```
+
 
 
 
