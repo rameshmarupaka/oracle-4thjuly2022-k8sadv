@@ -638,3 +638,48 @@ Removing login credentials for https://index.docker.io/v1/
 ```
 
 
+### lets pull it 
+
+```
+docker pull dockerashu/ashutoshhapp:v1
+```
+
+## pushing image to OCR 
+
+### tagging 
+
+```
+docker  tag  ashuapp:imgv3   phx.ocir.io/axmbtg8judkl/ashuociapp:v1
+```
+
+### login 
+
+```
+[root@docker-server ~]# docker login phx.ocir.io
+Username: axmbtg8judkl/learntechbyme@gmail.com
+Password: 
+WARNING! Your password will be stored unencrypted in /root/.docker/config.json.
+Configure a credential helper to remove this warning. See
+https://docs.docker.com/engine/reference/commandline/login/#credentials-store
+
+Login Succeeded
+```
+
+### pushing 
+
+```
+[root@docker-server ~]# docker push  phx.ocir.io/axmbtg8judkl/ashuociapp:v1
+The push refers to repository [phx.ocir.io/axmbtg8judkl/ashuociapp]
+73bda6a0c367: Pushed 
+e7344f8a29a3: Pushed 
+44193d3f4ea2: Pushed 
+41451f050aa8: Pu
+```
+
+### logout 
+
+```
+[root@docker-server ~]# docker logout  phx.ocir.io
+Removing login credentials for phx.ocir.io
+
+```
