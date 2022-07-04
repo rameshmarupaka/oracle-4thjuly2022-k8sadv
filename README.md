@@ -484,6 +484,96 @@ services:
 
 ```
 
+### creating network bridge manually 
+
+```
+[root@docker-server ~]# docker  network  create   ashubr1  
+4e85d8253ed106c471f6a6e8b3452d2f603d79e05f44a93501300a8be62592a3
+[root@docker-server ~]# docker  network ls
+NETWORK ID          NAME                  DRIVER              SCOPE
+4e85d8253ed1        ashubr1               bridge              local
+eb903769f600        bridge                bridge              local
+19d30894d86c        host                  host                local
+c491aa5ac4b7        mariwebapp_default    bridge              local
+47aaf11e6e6c        none                  null                local
+d9c8d6b05d0d        ramswebapp_default    bridge              local
+4406901381ee        reddywebapp_default   bridge              local
+[root@docker-server ~]# docker  network inspect ashubr1 
+[
+    {
+        "Name": "ashubr1",
+        "Id": "4e85d8253ed106c471f6a6e8b3452d2f603d79e05f44a93501300a8be62592a3",
+        "Created": "2022-07-04T08:57:56.831056524Z",
+        "Scope": "local",
+        "Driver": "bridge",
+        "EnableIPv6": false,
+        "IPAM": {
+            "Driver": "default",
+            "Options": {},
+            "Config": [
+                {
+                    "Subnet": "172.29.0.0/16",
+                    "Gateway": "172.29.0.1"
+                }
+            ]
+
+```
+
+### docker network with custom subnets 
+
+```
+[root@docker-server ~]# 
+[root@docker-server ~]# docker  network  create ashubr2  --subnet  192.168.100.0/24 
+9e114871f45386c0605a33de2228ef46bda7e61e1fe8c997d2109e0a9ebf0e60
+[root@docker-server ~]# docker network ls
+NETWORK ID          NAME                 DRIVER              SCOPE
+4e85d8253ed1        ashubr1              bridge              local
+9e114871f453        ashubr2              bridge              local
+eb903769f600        bridge               bridge              local
+
+```
+
+### testing container networking 
+
+```
+[root@docker-server ~]# docker  run -itd --name c1  --network ashubr1  alpine  
+556cab1db6b4e6640265791499716bd2a92881a8b90259b1e85c08e11c5861d2
+[root@docker-server ~]# docker  run -itd --name c2  --network ashubr1  alpine  
+347e32e3a9e2d73cb185b203b483676fdb507d1969c52d95283f812fcd61e11c
+[root@docker-server ~]# 
+[root@docker-server ~]# 
+[root@docker-server ~]# docker  run -itd --name c3  --network ashubr2  alpine  
+3f58b3c6a081246fb59e0cbd9fbfaff2cb5a3e86217b3bd9514c5d94b5edd3ab
+[root@docker-server ~]# 
+[root@docker-server ~]# docker  run -itd --name c4  --network ashubr2  alpine  
+502fc8c4521143d6ea0a050bd8461fde1fdb8619f0e2f9ba765930818257569d
+[root@docker-server ~]# 
+[root@docker-server ~]# docker  exec  -it c1  sh 
+/ # ping c2
+PING c2 (172.29.0.3): 56 data bytes
+64 bytes from 172.29.0.3: seq=0 ttl=64 time=0.092 ms
+^C
+--- c2 ping statistics ---
+1 packets transmitted, 1 packets received, 0% packet loss
+round-trip min/avg/max = 0.092/0.092/0.092 ms
+/ # ping c3
+ping: bad address 'c3'
+/ # exit
+[root@docker-server ~]# docker  exec  -it c3  sh 
+/ # ping c1
+ping: bad address 'c1'
+/ # ping c4
+PING c4 (192.168.100.3): 56 data bytes
+64 bytes from 192.168.100.3: seq=0 ttl=64 time=0.090 ms
+64 bytes from 192.168.100.3: seq=1 ttl=64 time=0.056 ms
+^C
+--- c4 ping statistics ---
+2 packets transmitted, 2 packets received, 0% packet loss
+round-trip min/avg/max = 0.056/0.073/0.090 ms
+/ # 
+
+```
+
 
 
 
