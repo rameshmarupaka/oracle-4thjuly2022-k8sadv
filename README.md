@@ -109,6 +109,31 @@ Created symlink from /etc/systemd/system/multi-user.target.wants/docker.service 
 usermod -aG docker <username>
 ```
 
+### in Vscode terminal 
+
+```
+[ashu@docker-server ~]$ whoami
+ashu
+[ashu@docker-server ~]$ docker  version 
+Client: Docker Engine - Community
+ Version:           19.03.11-ol
+ API version:       1.40
+ Go version:        go1.16.2
+ Git commit:        9bb540d
+ Built:             Fri Jul 23 01:33:55 2021
+ OS/Arch:           linux/amd64
+ Experimental:      false
+
+Server: Docker Engine - Community
+ Engine:
+  Version:          19.03.11-ol
+  API version:      1.40 (minimum version 1.12)
+  Go version:       go1.16.2
+  Git commit:       9bb540d
+  Built:            Fri Jul 23 01:32:08 2021
+```
+
+
 
 
 
