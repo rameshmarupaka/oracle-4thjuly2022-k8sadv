@@ -95,6 +95,17 @@ Created symlink from /etc/systemd/system/multi-user.target.wants/docker.service 
 
 ### giving access to non root users 
 
+### creating multiple users 
+
+```
+for  i in  ashu  arvind asad gaurav jijin krishna  manjunath natarajan reddy narayan pradeep ramesh rohit   shankar vinod 
+do useradd $i
+echo "Docker@123456"  |  passwd $i --stdin 
+done 
+```
+
+### giving access 
+
 ```
 [root@docker-server ~]# for  i  in  `ls /home`
 > do
