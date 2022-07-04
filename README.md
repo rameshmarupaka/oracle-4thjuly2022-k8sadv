@@ -574,6 +574,67 @@ round-trip min/avg/max = 0.056/0.073/0.090 ms
 
 ```
 
+### image sharing to other docker users or docker host 
 
+### tagging 
+
+```
+ 
+[root@docker-server ~]# docker  images
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+ashuapp             imgv3               8addb4e190a2        3 hours ago         144MB
+oraclelinux         7.9                 adbeb4da0849        2 weeks ago         253MB
+alpine              latest              e66264b98777        5 weeks ago         5.53MB
+[root@docker-server ~]# 
+[root@docker-server ~]# 
+[root@docker-server ~]# docker  tag  ashuapp:imgv3    docker.io/dockerashu/ashutoshhapp:v1  
+[root@docker-server ~]# docker  images
+REPOSITORY                TAG                 IMAGE ID            CREATED             SIZE
+dockerashu/ashutoshhapp   v1                  8addb4e190a2        3 hours ago         144MB
+ashuapp                   imgv3               8addb4e190a2        3 hours ago         144MB
+oraclelinux               7.9                 adbeb4da0849        2 weeks ago         253MB
+alpine                    latest              e66264b98777        5 weeks ago         5.53MB
+[root@docker-server ~]# imgv3
+
+
+
+```
+
+### login 
+
+```
+[root@docker-server ~]# docker  login  
+Login with your Docker ID to push and pull images from Docker Hub. If you don't have a Docker ID, head over to https://hub.docker.com to create one.
+Username: dockerashu
+Password: 
+WARNING! Your password will be stored unencrypted in /root/.docker/config.json.
+Configure a credential helper to remove this warning. See
+https://docs.docker.com/engine/reference/commandline/login/#credentials-store
+
+Login Succeeded
+```
+
+###  pushing 
+
+```
+
+[root@docker-server ~]# docker  push docker.io/dockerashu/ashutoshhapp:v1 
+The push refers to repository [docker.io/dockerashu/ashutoshhapp]
+73bda6a0c367: Pushed 
+e7344f8a29a3: Mounted from library/nginx 
+44193d3f4ea2: Mounted from library/nginx 
+41451f050aa8: Mounted from library/nginx 
+b2f82de68e0d: Mounted from library/nginx 
+d5b40e80384b: Moun
+
+
+```
+
+### logout 
+
+```
+[root@docker-server ~]# docker  logout 
+Removing login credentials for https://index.docker.io/v1/
+```
 
 
