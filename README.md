@@ -683,3 +683,25 @@ e7344f8a29a3: Pushed
 Removing login credentials for phx.ocir.io
 
 ```
+
+### restart policy for container 
+
+<img src="restart.png">
+
+```
+[root@docker-server ~]# docker run -itd --name ashuc4  --restart always  alpine 
+47410921ac7b195ccd36f68b056f594aedd936ebe61820d5327a93cb8e46f137
+[root@docker-server ~]# docker  ps
+CONTAINER ID        IMAGE               COMMAND                 CREATED             STATUS              PORTS               NAMES
+47410921ac7b        alpine              "/bin/sh"               9 seconds ago       Up 8 seconds                            ashuc4
+
+```
+
+### checking restart policy of container 
+
+```
+[root@docker-server ~]# docker  inspect ashuc4  --format='{{.HostConfig.RestartPolicy.Name}}'
+always
+```
+
+
