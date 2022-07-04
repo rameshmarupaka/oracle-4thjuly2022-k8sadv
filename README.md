@@ -1,1 +1,4 @@
-# oracle-4thjuly2022-k8sadv
+## Training plan 
+
+<img src="plan.png">
+
