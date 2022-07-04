@@ -144,6 +144,111 @@ Server: Docker Engine - Community
   Built:            Fri Jul 23 01:32:08 2021
 ```
 
+### docker image to docker containers 
+
+<img src="di.png">
+
+### creating images using dockerfile 
+
+```
+[ashu@docker-server ~]$ mkdir  images
+[ashu@docker-server ~]$ ls
+images
+[ashu@docker-server ~]$ mkdir  images/webapp  
+[ashu@docker-server ~]$ mkdir  images/javacode 
+[ashu@docker-server ~]$ mkdir  images/pythoncode
+[ashu@docker-server ~]$ ls  images/
+javacode  pythoncode  webapp
+```
+
+### sample html based project for container 
+
+```
+git clone  https://github.com/schoolofdevops/html-sample-app
+Cloning into 'html-sample-app'...
+remote: Enumerating objects: 74, done.
+remote: Total 74 (delta 0), reused 0 (delta 0), pack-reused 74
+Unpacking objects: 100% (74/74), done.
+```
+
+### content of dockerfile 
+
+```
+[ashu@docker-server webapp]$ ls
+html-sample-app
+[ashu@docker-server webapp]$ 
+[ashu@docker-server webapp]$ touch Dockerfile
+[ashu@docker-server webapp]$ ls
+Dockerfile  html-sample-app
+```
+### web app server Nginx 
+
+<img src="ng.png">
+
+### Dockerfile 
+
+```
+FROM nginx
+ # docker hub is having that image 
+LABEL name=ashutoshh 
+LABEL email=ashutoshh@linux.com 
+# optional field but to share image designer info 
+COPY html-sample-app /usr/share/nginx/html/
+# copy entire folder data to nginx app location 
+```
+
+### .dockerignore 
+
+```
+html-sample-app/.git
+html-sample-app/LICENSE.txt
+html-sample-app/README.txt
+```
+
+### final directory structure 
+
+```
+[ashu@docker-server webapp]$ ls  -a
+.  ..  Dockerfile  .dockerignore  html-sample-app
+```
+
+### now building app to image 
+
+<img src="build.png">
+
+
+```
+[ashu@docker-server webapp]$ ls -a
+.  ..  Dockerfile  .dockerignore  html-sample-app
+[ashu@docker-server webapp]$ docker  build  -t   ashuapp:imgv1  .  
+Sending build context to Docker daemon  2.099MB
+Step 1/4 : FROM nginx
+Trying to pull repository docker.io/library/nginx ... 
+latest: Pulling from docker.io/library/nginx
+b85a868b505f: Pull complete 
+f4407ba1f103: Pull complete 
+4a7307612456: Pull complete 
+935cecace2a0: Pull complete 
+8f46223e4234: Pull complete 
+fe0ef4c895f5: Pull complete 
+Digest: sha256:10f14ffa93f8dedf1057897b745e5ac72ac5655c299dade0aa434c71557697ea
+Status: Downloaded newer image for nginx:latest
+ ---> 55f4b40fe486
+Step 2/4 : LABEL name=ashutoshh
+ ---> Running in 8f8e1e476af4
+Removing intermediate container 8f8e1e476af4
+ ---> 226d7e896ad5
+Step 3/4 : LABEL email=ashutoshh@linux.com
+ ---> Running in 8289654b0f66
+Removing intermediate container 8289654b0f66
+ ---> 6f8a559d403a
+Step 4/4 : COPY html-sample-app /usr/share/nginx/html/
+ ---> 4b580df91925
+Successfully built 4b580df91925
+Successfully tagged ashuapp:imgv1
+```
+
+
 
 
 
