@@ -253,6 +253,29 @@ Successfully tagged ashuapp:imgv1
 <img src="run.png">
 
 
+### list of running containers 
+
+```
+[ashu@docker-server webapp]$ docker  ps
+CONTAINER ID        IMAGE               COMMAND                  CREATED              STATUS              PORTS                          NAMES
+f1b2702dbbd0        mari:imagev1        "/docker-entrypoint.…"   3 seconds ago        Up 2 seconds        0.0.0.0:1244->80/tcp           mariappanwebapp
+2d9d96f42725        gauravapp:imgv1     "/docker-entrypoint.…"   4 seconds ago        Up 4 seconds        0.0.0.0:1280->80/tcp           gaur2
+c84f37f00402        aravindapp:imgv1    "/docker-entrypoint.…"   14 seconds ago       Up 13 seconds       0.0.0.0:1235->80/tcp           aravind2
+c52be1e53a86        krisapp:imgv1       "/docker-entrypoint.…"   27 seconds ago       Up 27 seconds       0.0.0.0:1536->80/tcp           kris1
+2bb6a67bd1ea        narayanapp:1        "/docker-entrypoint.…"   43 seconds ago       Up 42 seconds       0.0.0.0:1333->80/tcp           nara1
+288fa74510ea        reddyrep:imgv1      "/docker-entrypoint.…"   About a minute ago   Up About a minute   0.0.0.0:1055->80/tcp           reddycont
+cdb962ef02ed        vinodapp:imgv2 
+```
+
+### if we change app or dockerfile then --
+
+```
+60  docker  kill ashuc1
+   61  docker rm ashuc1
+   62  ls
+   63  docker build -t ashuapp:imgv2 . 
+   64  docker run -d --name ashuc2 -p 1234:80  ashuapp:imgv2 
+```
 
 
 
