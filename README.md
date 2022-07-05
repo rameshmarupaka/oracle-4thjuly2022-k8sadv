@@ -579,6 +579,100 @@ ashupod-123   1/1     Running   0          3m17s
 
 ```
 
+### Deploy pod from OCR 
+
+```
+kubectl   run  ashupod4 --image=phx.ocir.io/axmbtg8judkl/ashuociapp:v1 --port 80 --dry-run=client  -o yaml >ocrpod.yaml 
+```
+
+### 
+
+```
+[ashu@k8s-client k8s_app_deploy]$ kubectl apply -f  ocrpod.yaml 
+pod/ashupod4 created
+[ashu@k8s-client k8s_app_deploy]$ kubectl  get  po 
+NAME       READY   STATUS         RESTARTS   AGE
+ashupod4   0/1     ErrImagePull   0          11s
+[ashu@k8s-client k8s_app_deploy]$ kubectl  get  po 
+NAME       READY   STATUS             RESTARTS   AGE
+ashupod4   0/1     ImagePullBackOff   0          19s
+```
+
+### introduction secret 
+
+<img src="secret.png">
+
+
+### creating secret 
+
+```
+[ashu@k8s-client k8s_app_deploy]$ kubectl create secret 
+Create a secret using specified subcommand.
+
+Available Commands:
+  docker-registry   Create a secret for use with a Docker registry
+  generic           Create a secret from a local file, directory, or literal value
+  tls               Create a TLS secret
+
+Usage:
+
+```
+
+####
+
+```
+kubectl create secret docker-registry ashu-sec --docker-server=phx.ocir.io   --docker-username="audkl/ntechbyme@gmail.com"   --docker-password="lI+1_9nUr" --dry-run=client -o yaml   >ocr-sec.yaml
+```
+
+### cretaing secret 
+
+```
+ashu@k8s-client k8s_app_deploy]$ kubectl apply -f ocr-sec.yaml 
+secret/ashu-sec created
+[ashu@k8s-client k8s_app_deploy]$ kubectl  get  secret 
+NAME       TYPE                             DATA   AGE
+ashu-sec   kubernetes.io/dockerconfigjson   1      4s
+[ashu@k8s-client k8s_app_deploy]$ 
+```
+
+### final YAML with POD and secret details 
+
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: ashupod4
+  name: ashupod4
+spec: # container / security info 
+  imagePullSecrets: # calling secret 
+  - name: ashu-sec # name of secret 
+  containers:
+  - image: phx.ocir.io/axmbtg8judkl/ashuociapp:v1
+    name: ashupod4
+    ports:
+    - containerPort: 80
+    resources: {}
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+status: {}
+
+```
+
+### Deploy it 
+
+```
+[ashu@k8s-client k8s_app_deploy]$ kubectl replace -f ocrpod.yaml  --force 
+pod "ashupod4" deleted
+pod/ashupod4 replaced
+[ashu@k8s-client k8s_app_deploy]$ kubectl  get po 
+NAME       READY   STATUS    RESTARTS   AGE
+ashupod4   1/1     Running   0          6s
+[ashu@k8s-client k8s_app_deploy]$ 
+```
+
+
 
 
 
