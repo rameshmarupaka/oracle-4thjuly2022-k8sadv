@@ -173,6 +173,76 @@ b87113ef09ac7eda00a08c4883492c8dbffc42e0c60855efdc75b446e2c678df
       --cpuset-mems string             MEMs in which to allow execution (0-3, 0,1)
 ```
 
+### multi stage dockerfile 
+
+<img src="multi.png">
+
+### directory structure --
+
+```
+ashu@docker-server javacode]$ ls
+java-springboot
+[ashu@docker-server javacode]$ touch multi-stage.dockerfile
+[ashu@docker-server javacode]$ ls
+java-springboot  multi-stage.dockerfile
+[ashu@docker-server javacode]$ ls -a
+.  ..  .dockerignore  java-springboot  multi-stage.dockerfile
+[ashu@docker-server javacode]$ 
+
+```
+
+### MUltistage Dockerfile 
+
+```
+from oraclelinux:8.4  as Stage1 
+label name=ashutoshh
+label email=ashutoshh@linux.com
+RUN mkdir /javawebapp 
+# RUN is to get shell while building image 
+ADD java-springboot  /javawebapp/ 
+# ADD is similar to COPY both can copy folder data 
+RUN yum install java-1.8.0-openjdk.x86_64 java-1.8.0-openjdk-devel.x86_64 maven -y 
+WORKDIR /javawebapp
+# changing directory during build time 
+# workdir is like cd command in linux/unix 
+RUN mvn clean package 
+# build java source code into .war file -- target/WebApp.war 
+FROM tomcat 
+LABEL email=ashutoshh@linux.com
+COPY --from=Stage1  /javawebapp/target/WebApp.war /usr/local/tomcat/webapps/ 
+```
+
+### .dockerignore 
+
+```
+java-springboot/.git
+java-springboot/README.md
+```
+
+### lets build it 
+
+```
+[ashu@docker-server javacode]$ ls -a
+.  ..  .dockerignore  java-springboot  multi-stage.dockerfile
+[ashu@docker-server javacode]$ docker  build  -t  ashuspring:appv1  -f multi-stage.dockerfile  . 
+Sending build context to Docker daemon  15.36kB
+Step 1/11 : from oraclelinux:8.4  as Stage1
+ ---> 97e22ab49eea
+Step 2/11 : label name=ashutoshh
+ ---> Running in 064f465b12c0
+Removing intermediate container 064f465b12c0
+ ---> 7c791f5f2606
+Step 3/11 : label email=ashutoshh@linux.com
+ ---> Running in 9ff10b4a1c69
+Removing intermediate container 9ff10b4a1c69
+ ---> 02738e9d5286
+Step 4/11 : RUN mkdir /javawebapp
+ ---> Running in f34bf1b0c9d8
+Removing intermediate container f34bf1b0c9d8
+ ---> 1c14d8cf65c4
+Step 5/11 : ADD java-springboot  /javawebapp/
+ ---> 9731bd0e1d4a
+```
 
 
 
