@@ -298,6 +298,28 @@ kustomizeVersion: v4.5.4
 
 ```
 
+### k8s components 
+
+### master Side / control plane 
+
+### api-server 
+
+<img src="api1.png">
+
+### kube-schedular 
+
+<img src="schedular.png">
+
+### ETCD 
+
+<img src="etcd.png">
+
+### k8s Nodes 
+
+<img src="node1.png">
+
+
+
 
 
 
