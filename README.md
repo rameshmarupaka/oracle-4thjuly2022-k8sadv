@@ -151,6 +151,28 @@ mysql> show databases;
 
 ```
 
+### limit containers 
+
+```
+[ashu@docker-server images]$ docker  run -d --name ashudb2 -e MYSQL_ROOT_PASSWORD="Docker@123456" --memory 400M --cpu-shares=30  mysql 
+b87113ef09ac7eda00a08c4883492c8dbffc42e0c60855efdc75b446e2c678df
+[ashu@docker-server images]$ 
+```
+
+### more cpu options 
+
+```
+[ashu@docker-server images]$ docker run --help |  grep -i cpu 
+      --cpu-period int                 Limit CPU CFS (Completely Fair Scheduler) period
+      --cpu-quota int                  Limit CPU CFS (Completely Fair Scheduler) quota
+      --cpu-rt-period int              Limit CPU real-time period in microseconds
+      --cpu-rt-runtime int             Limit CPU real-time runtime in microseconds
+  -c, --cpu-shares int                 CPU shares (relative weight)
+      --cpus decimal                   Number of CPUs
+      --cpuset-cpus string             CPUs in which to allow execution (0-3, 0,1)
+      --cpuset-mems string             MEMs in which to allow execution (0-3, 0,1)
+```
+
 
 
 
