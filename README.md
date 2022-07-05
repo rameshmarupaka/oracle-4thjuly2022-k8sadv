@@ -415,6 +415,54 @@ NAME           READY   STATUS             RESTARTS   AGE
 ashupod-123    1/1     Running            0          13s
 ```
 
+### pod more details 
+
+```
+[ashu@k8s-client ~]$ kubectl get po  -o wide 
+NAME             READY   STATUS             RESTARTS      AGE    IP                NODE    NOMINATED NODE   READINESS GATES
+arapod-123       1/1     Running            0             12m    192.168.166.135   node1   <none>           <none>
+asad123-pod      1/1     Running            0             13m    192.168.166.133   node1   <none>           <none>
+asad123-pod1     0/1     CrashLoopBackOff   3 (42s ago)   89s    192.168.166.138   node1   <none>           <none>
+ashupod-123      1/1     Running            0             5m5s   192.168.104.8     node2   <none>           <none>
+champpod-1       1/1     Running            0             16m    192.168.104.2     node2   <none>           <none>
+gaurpod-123      1/1     Running            0             15m    192.168.166.132   node1   <none>           <none>
+jijinpod-123     1/1     Running            0             12m    192.168.166.134   node1   <none>           <none>
+krispod-123      1/1     Running            0             2m3s   192.168.166.137   node1   <none>           <none>
+narayanpod-123   1/1     Running            0             15m    192.168.104.5     node2   <none>           <none>
+prdpod-123       1/1     Running            0             15m    192.168.104.4     node2   <none>           <none>
+ramspod-777      1/1     Running            0             15m    192.168.166.131   node1   <none>           <none>
+reddypod-123     1/1     Running            0             16m    192.168.104.3     node2   <none>           <none>
+rohithpod-123    1/1     Running            0             7m2s   192.168.104.7     node2   <none>           <none>
+[ashu@k8s-client ~]$ 
+[ashu@k8s-client ~]$ kubectl get po  ashupod-123   -o wide 
+NAME          READY   STATUS    RESTARTS   AGE     IP              NODE    NOMINATED NODE   READINESS GATES
+ashupod-123   1/1     Running   0          5m56s   192.168.104.8   node2   <none>           <none>
+[ashu@k8s-client ~]$ 
+
+```
+
+### pod inside container 
+
+<img src="pod1.png">
+
+### checking logs of pod container 
+
+```
+[ashu@k8s-client ~]$ kubectl logs  ashupod-123 
+/docker-entrypoint.sh: /docker-entrypoint.d/ is not empty, will attempt to perform configuration
+/docker-entrypoint.sh: Looking for shell scripts in /docker-entrypoint.d/
+/docker-entrypoint.sh: Launching /docker-entrypoint.d/10-listen-on-ipv6-by-default.sh
+10-listen-on-ipv6-by-default.sh: info: Getting the checksum of /etc/nginx/conf.d/default.conf
+10-listen-on-ipv6-by-default.sh: info: Enabled listen on IPv6 in /etc/nginx/conf.d/default.conf
+/docker-entrypoint.sh: Launching /docker-entrypoint.d/20-envsubst-on-templates.sh
+/docker-entrypoint.sh: Launching /docker-entrypoint.d/30-tune-worker-processes.sh
+/docker-entrypoint.sh: Configuration complete; ready for start up
+2022/07/05 09:38:30 [notice] 1#1: using the "epoll" event method
+2022/07/05 09:38:30 [notice] 1#1: nginx/1.23.0
+2022/07/05 09:38:30 [notice] 1#1: built by 
+```
+
+
 
 
 
