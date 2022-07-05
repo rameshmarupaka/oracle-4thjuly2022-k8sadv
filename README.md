@@ -318,6 +318,70 @@ kustomizeVersion: v4.5.4
 
 <img src="node1.png">
 
+### SETup methods -- 
+
+<img src="setup.png">
+
+### getting auth file for k8s client/dev
+
+<img src="auth.png">
+
+### connecting from client
+
+```
+[ashu@k8s-client images]$ kubectl  version  -o yaml   --kubeconfig  admin.conf 
+clientVersion:
+  buildDate: "2022-06-15T14:22:29Z"
+  compiler: gc
+  gitCommit: f66044f4361b9f1f96f0053dd46cb7dce5e990a8
+  gitTreeState: clean
+  gitVersion: v1.24.2
+  goVersion: go1.18.3
+  major: "1"
+  minor: "24"
+  platform: linux/amd64
+kustomizeVersion: v4.5.4
+serverVersion:
+  buildDate: "2022-06-15T14:15:38Z"
+  compiler: gc
+  gitCommit: f66044f4361b9f1f96f0053dd46cb7dce5e990a8
+  gitTreeState: clean
+  gitVersion: v1.24.2
+  goVersion: go1.18.3
+  major: "1"
+  minor: "24"
+  platform: linux/amd64
+```
+
+####
+
+```
+[ashu@k8s-client images]$ kubectl  cluster-info  --kubeconfig admin.conf 
+Kubernetes control plane is running at https://44.207.251.87:6443
+CoreDNS is running at https://44.207.251.87:6443/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy
+
+To further debug and diagnose cluster problems, use 'kubectl cluster-info dump'.
+```
+
+### done 
+
+```
+[ashu@k8s-client images]$ cp -v admin.conf  ~/.kube/config 
+‘admin.conf’ -> ‘/home/ashu/.kube/config’
+[ashu@k8s-client images]$ 
+[ashu@k8s-client images]$ 
+[ashu@k8s-client images]$ kubectl  cluster-info 
+Kubernetes control plane is running at https://44.207.251.87:6443
+CoreDNS is running at https://44.207.251.87:6443/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy
+
+To further debug and diagnose cluster problems, use 'kubectl cluster-info dump'.
+[ashu@k8s-client images]$ kubectl  get nodes
+NAME            STATUS   ROLES           AGE     VERSION
+control-plane   Ready    control-plane   4h13m   v1.24.2
+node1           Ready    <none>          4h12m   v1.24.2
+node2           Ready    <none>          4h12m   v1.24.2
+```
+
 
 
 
