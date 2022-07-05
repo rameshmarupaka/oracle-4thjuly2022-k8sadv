@@ -462,6 +462,21 @@ ashupod-123   1/1     Running   0          5m56s   192.168.104.8   node2   <none
 2022/07/05 09:38:30 [notice] 1#1: built by 
 ```
 
+### deleting 
+
+```
+
+[ashu@k8s-client k8s_app_deploy]$ kubectl  delete -f  ashupod1.yaml 
+pod "ashupod-123" deleted
+```
+
+###
+
+```
+[ashu@k8s-client k8s_app_deploy]$ kubectl  delete pod  prdpod-123
+pod "prdpod-123" deleted
+```
+
 
 
 
