@@ -244,6 +244,60 @@ Step 5/11 : ADD java-springboot  /javawebapp/
  ---> 9731bd0e1d4a
 ```
 
+### container to kubernetes 
+
+<img src="cont1.png">
+
+### container at prod level need more attention 
+
+<img src="prob1.png">
+
+### tools for container orchestration 
+
+<img src="tools.png">
+
+### info about k8s 
+
+<img src="k8s.png">
+
+### getting started with k8s architecture 
+
+<img src="arch1.png">
+
+### setup client side kubectl installation 
+
+```
+[root@k8s-client ~]# curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100   154  100   154    0     0    873      0 --:--:-- --:--:-- --:--:--   875
+100 43.5M  100 43.5M    0     0  67.7M      0 --:--:-- --:--:-- --:--:--  148M
+[root@k8s-client ~]# ls
+kubectl
+[root@k8s-client ~]# mv kubectl /usr/bin/
+[root@k8s-client ~]# chmod +x /usr/bin/kubectl 
+[root@k8s-client ~]# 
+[root@k8s-client ~]# kubectl version --client 
+WARNING: This version information is deprecated and will be replaced with the output from kubectl version --short.  Use --output=yaml|json to get the full version.
+Client Version: version.Info{Major:"1", Minor:"24", GitVersion:"v1.24.2", GitCommit:"f66044f4361b9f1f96f0053dd46cb7dce5e990a8", GitTreeState:"clean", BuildDate:"2022-06-15T14:22:29Z", GoVersion:"go1.18.3", Compiler:"gc", Platform:"linux/amd64"}
+Kustomize Version: v4.5.4
+[root@k8s-client ~]# 
+[root@k8s-client ~]# 
+[root@k8s-client ~]# kubectl version --client  -o yaml 
+clientVersion:
+  buildDate: "2022-06-15T14:22:29Z"
+  compiler: gc
+  gitCommit: f66044f4361b9f1f96f0053dd46cb7dce5e990a8
+  gitTreeState: clean
+  gitVersion: v1.24.2
+  goVersion: go1.18.3
+  major: "1"
+  minor: "24"
+  platform: linux/amd64
+kustomizeVersion: v4.5.4
+
+```
+
 
 
 
