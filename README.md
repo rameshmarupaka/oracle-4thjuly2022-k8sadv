@@ -382,6 +382,39 @@ node1           Ready    <none>          4h12m   v1.24.2
 node2           Ready    <none>          4h12m   v1.24.2
 ```
 
+### k8s deals with POd 
+
+<img src="pod.png">
+
+### pod design 
+
+### demo 
+
+```
+apiVersion: v1 # apiserver version 
+kind: Pod # resource under apiversion v1  
+metadata: # info about resource 
+  name: ashupod-123 # name of pod
+spec: # info about app-->container/networking/storage/security
+  containers:
+  - name: ashuc1
+    image: dockerashu/ashutoshhapp:v1
+    ports:
+    - containerPort: 80 
+```
+
+### deploy pod and checking it 
+
+```
+[ashu@k8s-client k8s_app_deploy]$ ls
+ashupod1.yaml
+[ashu@k8s-client k8s_app_deploy]$ kubectl apply -f  ashupod1.yaml 
+pod/ashupod-123 created
+[ashu@k8s-client k8s_app_deploy]$ kubectl  get  pods 
+NAME           READY   STATUS             RESTARTS   AGE
+ashupod-123    1/1     Running            0          13s
+```
+
 
 
 
