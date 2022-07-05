@@ -490,6 +490,94 @@ pod "prdpod-123" deleted
 kubectl  run   ashupod3 --image=dockerashu/ashutoshhapp:v1  --port 80  --dry-run=client -o yaml >pod.yaml
 ```
 
+## namespace in k8s 
+
+<img src="ns.png">
+
+### default namespaces 
+
+```
+[ashu@k8s-client k8s_app_deploy]$ kubectl  get  namespaces
+NAME              STATUS   AGE
+default           Active   7h27m
+kube-node-lease   Active   7h27m
+kube-public       Active   7h27m
+kube-system       Active   7h27m
+[ashu@k8s-client k8s_app_deploy]$ kubectl  get  ns
+NAME              STATUS   AGE
+default           Active   7h27m
+kube-node-lease   Active   7h27m
+kube-public       Active   7h27m
+kube-system       Active   7h27m
+```
+
+### kube-system namespace 
+
+```
+[ashu@k8s-client k8s_app_deploy]$ kubectl  get  po -n kube-system 
+NAME                                       READY   STATUS    RESTARTS   AGE
+calico-kube-controllers-6766647d54-xcmn7   1/1     Running   0          7h27m
+calico-node-75474                          1/1     Running   0          7h27m
+calico-node-nvdrl                          1/1     Running   0          7h27m
+calico-node-zgkpc                          1/1     Running   0          7h27m
+coredns-6d4b75cb6d-4hhnt                   1/1     Running   0          7h28m
+coredns-6d4b75cb6d-gszfx                   1/1     Running   0          7h28m
+etcd-control-plane                         1/1     Running   0          7h28m
+kube-apiserver-control-plane               1/1     Running   0          7h28m
+kube-controller-manager-control-plane      1/1     Running   0          7h28m
+kube-proxy-2mq64                           1/1     Running   0          7h27m
+kube-proxy-7gkn8                           1/1     Running   0          7h28m
+kube-proxy-f8hwh                           1/1     Running   0          7h27m
+kube-scheduler-control-plane               1/1     Running   0          7h28m
+```
+
+### creating custom namespaces 
+
+```
+[ashu@k8s-client k8s_app_deploy]$ kubectl  create  namespace  ashu-apps --dry-run=client -o yaml
+apiVersion: v1
+kind: Namespace
+metadata:
+  creationTimestamp: null
+  name: ashu-apps
+spec: {}
+status: {}
+[ashu@k8s-clien
+```
+### creating 
+
+```
+  293  kubectl  create  namespace  ashu-apps --dry-run=client -o yaml       >ns.yaml 
+  294  ls
+  295  kubectl  apply -f ns.yaml 
+  296  kubectl  get  ns
+  297  kubectl  delete ns ashu-apps
+  298  history 
+[ashu@k8s-client k8s_app_deploy]$ kubectl  create  namespace  ashu-apps 
+namespace/ashu-apps created
+[ashu@k8s-client k8s_app_deploy]$ kubectl  get ns
+NAME              STATUS   AGE
+ashu-apps         Active   9s
+```
+
+### DEPLOY in custom namespace 
+
+<img src="nspod.png">
+
+### setting default namespace to k8s client 
+
+```
+[ashu@k8s-client k8s_app_deploy]$ kubectl  config set-context --current --namespace=ashu-apps 
+Context "kubernetes-admin@kubernetes" modified.
+[ashu@k8s-client k8s_app_deploy]$ kubectl  config get-contexts
+CURRENT   NAME                          CLUSTER      AUTHINFO           NAMESPACE
+*         kubernetes-admin@kubernetes   kubernetes   kubernetes-admin   ashu-apps
+[ashu@k8s-client k8s_app_deploy]$ 
+[ashu@k8s-client k8s_app_deploy]$ kubectl  get po
+NAME          READY   STATUS    RESTARTS   AGE
+ashupod-123   1/1     Running   0          3m17s
+
+```
 
 
 
