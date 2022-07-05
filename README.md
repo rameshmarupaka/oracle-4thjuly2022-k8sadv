@@ -64,4 +64,94 @@ NETWORK ID    NAME        DRIVER
                     "gateway": "10.88.0.1"
 ```
 
+###  More container logics 
+
+### Cgroups -- 
+
+<img src="cgroups.png">
+
+### Demo 1 
+
+```
+ docker  run -d --name ashudb1 -e MYSQL_ROOT_PASSWORD="Docker@123456"  mysql 
+Unable to find image 'mysql:latest' locally
+Trying to pull repository docker.io/library/mysql ... 
+latest: Pulling from docker.io/library/mysql
+824b15f81d65: Pull complete 
+c559dd1913db: Pull complete 
+e201c19614e6: Pull complete 
+f4247e8f6125: Pull complete 
+dc9fefd8cfb5: Pull complete 
+af3787edd16d: Pull complete 
+b6bb40f875d3: Pull complete 
+75f6b647ddb1: Pull complete 
+a09ca0f0cb24: Pull complete 
+9e223e3cd2fd: Pull complete 
+2b038d826c65: Pull complete 
+d33ac6052fc9: Pull complete 
+Digest: sha256:a840244706a5fdc3c704b15a3700bfda39fdc069262d7753fa09de2d9faf5f83
+Status: Downloaded newer image for mysql:latest
+d4dce6149ed6a961705c793a37d5b92fdc49fbaf1c6ec526624dd39729e90671
+[ashu@docker-server images]$ docker  ps
+CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS                 NAMES
+28b67125f7b2        mysql               "docker-entrypoint.s…"   14 seconds ago      Up 13 seconds       3306/tcp, 33060/tcp   prddb1
+d4dce6149ed6        mysql               "docker-entrypoint.s…"   38 seconds ago      Up 29 seconds       3306/tcp, 33060/tcp   ashudb1
+[ashu@docker-server images]$ 
+```
+
+### check ip of container 
+
+```
+[ashu@docker-server images]$ docker  inspect  ashudb1  --format='{{.NetworkSettings.IPAddress}}'
+172.17.0.2
+```
+
+### checking logs 
+
+```
+[ashu@docker-server images]$ docker logs   ashudb1
+2022-07-05 04:39:25+00:00 [Note] [Entrypoint]: Entrypoint script for MySQL Server 8.0.29-1debian10 started.
+2022-07-05 04:39:25+00:00 [Note] [Entrypoint]: Switching to dedicated user 'mysql'
+2022-07-05 04:39:25+00:00 [Note] [Entrypoint]: Entrypoint script for MySQL Server 8.0.29-1debian10 started.
+2022-07-05 04:39:25+00:00 [Note] [Entrypoint]: Initializing database files
+2022-07-05T04:39:25.236592Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.29) initializing of server in progress as process 41
+2022-07-05T04:39:25.242037Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2022-07-05T04:39:26.495836Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2022-07-05T04:39:27.394833Z 6 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+```
+
+### connecting to Db 
+
+```
+[root@docker-server ~]# docker  exec -it ashudb1  bash 
+root@d4dce6149ed6:/# mysql -u root -p
+Enter password: 
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 8
+Server version: 8.0.29 MySQL Community Server - GPL
+
+Copyright (c) 2000, 2022, Oracle and/or its affiliates.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> show databases; 
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| mysql              |
+| performance_schema |
+| sys                |
++--------------------+
+4 rows in set (0.01 sec)
+
+```
+
+
+
+
 
