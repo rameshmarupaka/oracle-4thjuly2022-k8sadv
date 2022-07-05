@@ -477,6 +477,19 @@ pod "ashupod-123" deleted
 pod "prdpod-123" deleted
 ```
 
+### auto generation of pod yaml / json 
+
+```
+  233  kubectl  run   ashupod3 --image=dockerashu/ashutoshhapp:v1  --port 80  --dry-run=client -o yaml 
+  234  kubectl  run   ashupod3 --image=dockerashu/ashutoshhapp:v1  --port 80  --dry-run=client -o json 
+```
+
+###
+
+```
+kubectl  run   ashupod3 --image=dockerashu/ashutoshhapp:v1  --port 80  --dry-run=client -o yaml >pod.yaml
+```
+
 
 
 
