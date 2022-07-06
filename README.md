@@ -181,6 +181,31 @@ round-trip min/avg/max = 0.361/0.447/0.533 ms
 / # exit
 ```
 
+### network model 
+
+<img src="cnm.png">
+
+### enduser to pod traffic 
+
+<img src="net2pod.png">
+
+### for Internal ks8 LBs we need serivce resources in k8s 
+
+<img src="svc.png">
+
+### type of service 
+
+<img src="stype.png">
+
+### Nodeport service 
+
+<img src="np.png">
+
+### explained nodeport
+
+<img src="np1.png">
+
+
 
 
 
