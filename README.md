@@ -144,6 +144,43 @@ ashucustomerpod   1/1     Running   0          20s   192.168.166.183   node1   <
 
 ```
 
+### networking in k8s 
+
+<img src="net.png">
+
+
+### container networking models 
+
+<img src="model.png">
+
+### checking pod ip and CNI details 
+
+<img src="cnid.png">
+
+### pod ipaddress usage number 1 
+
+```
+[ashu@docker-server k8s_app_deploy]$ kubectl  get  po -o wide
+NAME              READY   STATUS    RESTARTS   AGE   IP                NODE    NOMINATED NODE   READINESS GATES
+ashucustomerpod   1/1     Running   0          22m   192.168.166.183   node1   <none>           <none>
+[ashu@docker-server k8s_app_deploy]$ kubectl  run nettest --image=alpine --command sleep 10000 
+pod/nettest created
+[ashu@docker-server k8s_app_deploy]$ kubectl  get po -o wide
+NAME              READY   STATUS    RESTARTS   AGE   IP                NODE    NOMINATED NODE   READINESS GATES
+ashucustomerpod   1/1     Running   0          23m   192.168.166.183   node1   <none>           <none>
+nettest           1/1     Running   0          5s    192.168.104.50    node2   <none>           <none>
+[ashu@docker-server k8s_app_deploy]$ kubectl  exec -it nettest -- sh 
+/ # ping 192.168.166.183
+PING 192.168.166.183 (192.168.166.183): 56 data bytes
+64 bytes from 192.168.166.183: seq=0 ttl=62 time=0.533 ms
+64 bytes from 192.168.166.183: seq=1 ttl=62 time=0.361 ms
+^C
+--- 192.168.166.183 ping statistics ---
+2 packets transmitted, 2 packets received, 0% packet loss
+round-trip min/avg/max = 0.361/0.447/0.533 ms
+/ # exit
+```
+
 
 
 
