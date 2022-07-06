@@ -530,7 +530,95 @@ service/ashulb2   NodePort   10.109.162.29   <none>        1234:31762/TCP   11s
 ```
 
 
+### having webapp with changes pushed on OCR 
 
+### lets deploy It 
+
+```
+[ashu@docker-server k8s_app_deploy]$ mkdir  ocr-deploy
+[ashu@docker-server k8s_app_deploy]$ cd ocr-deploy/
+```
+
+### creating deployment --
+
+```
+kubectl create  deployment  ashuwebapp --image=phx.ocir.io/axmbtg8judkl/ashucustomer:v2  --port 80 --dry-run=client -o yaml >app_deploy.yaml
+```
+
+### as best practise we keep variables details outside main deployment 
+
+```
+kubectl  create  configmap  ashucm --from-literal  key1=webapp1 --dry-run=client -o  yaml >configmap.yaml
+```
+
+### to pull image we are having secret 
+
+```
+kubectl create secret  docker-registry ashuapp-sec  --docker-server=phx.ocir.io --docker-username="aail.com"  --docker-password="9gUQj)_9nUr" --dry-run=client -o  yaml  >app_secret.yaml
+```
+
+### final YAML 
+
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: ashuwebapp
+  name: ashuwebapp # name of deployment 
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ashuwebapp
+  strategy: {}
+  template: # for pod creation 
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: ashuwebapp
+    spec:
+      imagePullSecrets: # calling secret to pull image 
+      - name: ashuapp-sec # name of secret used by kubelet on minion side 
+      containers:
+      - image: phx.ocir.io/axmbtg8judkl/ashucustomer:v2
+        name: ashucustomer
+        ports:
+        - containerPort: 80
+        env: # calling / using env data 
+        - name: deploy # from dockerfile name of env 
+          valueFrom: # reading value from somewhere 
+            configMapKeyRef:
+              name: ashucm # name of configmap 
+              key: key1 # key of cm 
+        resources: {}
+status: {}
+
+```
+
+###  lets deploy it 
+
+```
+[ashu@docker-server ocr-deploy]$ ls
+app_deploy.yaml  app_secret.yaml  configmap.yaml
+[ashu@docker-server ocr-deploy]$ kubectl  apply -f . 
+deployment.apps/ashuwebapp created
+secret/ashuapp-sec created
+configmap/ashucm created
+[ashu@docker-server ocr-deploy]$ kubectl   get  deploy 
+NAME         READY   UP-TO-DATE   AVAILABLE   AGE
+ashuwebapp   0/1     1            0           10s
+[ashu@docker-server ocr-deploy]$ kubectl   get  secret 
+NAME          TYPE                             DATA   AGE
+ashu-sec      kubernetes.io/dockerconfigjson   1      23h
+ashuapp-sec   kubernetes.io/dockerconfigjson   1      15s
+[ashu@docker-server ocr-deploy]$ kubectl   get  cm 
+NAME               DATA   AGE
+ashucm             1      23s
+kube-root-ca.crt   1      24h
+[ashu@docker-server ocr-deploy]$ 
+```
 
 
 
