@@ -114,6 +114,37 @@ deploy.sh  docker-compose.yaml  Dockerfile  html-sample-app  project-html-websit
  ⠿ Container ashuc1                Started
 ```
 
+### k8s for pod YAML 
+
+```
+kubectl run  ashucustomerpod --image=docker.io/dockerashu/ashucustomer:v1  --port 80   --dry-run=client -o yaml  >customer.yaml
+```
+
+### final YAML for webapp2 
+
+<img src="web1.png">
+
+
+### deploy YAML 
+
+```
+[ashu@docker-server k8s_app_deploy]$ kubectl apply -f  customer.yaml 
+pod/ashucustomerpod created
+[ashu@docker-server k8s_app_deploy]$ kubectl  get  po 
+NAME              READY   STATUS              RESTARTS   AGE
+ashucustomerpod   0/1     ContainerCreating   0          3s
+[ashu@docker-server k8s_app_deploy]$ kubectl  get  po 
+NAME              READY   STATUS    RESTARTS   AGE
+ashucustomerpod   1/1     Running   0          14s
+[ashu@docker-server k8s_app_deploy]$ kubectl  get  po -o wide
+NAME              READY   STATUS    RESTARTS   AGE   IP                NODE    NOMINATED NODE   READINESS GATES
+ashucustomerpod   1/1     Running   0          20s   192.168.166.183   node1   <none>           <none>
+[ashu@docker-server k8s_app_deploy]$ 
+
+
+```
+
+
 
 
 
