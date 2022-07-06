@@ -205,6 +205,94 @@ round-trip min/avg/max = 0.361/0.447/0.533 ms
 
 <img src="np1.png">
 
+### creating nodeport serive YAML 
+
+```
+[ashu@docker-server images]$ kubectl create  service 
+Create a service using a specified subcommand.
+
+Aliases:
+service, svc
+
+Available Commands:
+  clusterip      Create a ClusterIP service
+  externalname   Create an ExternalName service
+  loadbalancer   Create a LoadBalancer service
+  nodeport       Create a NodePort service
+  
+  kubectl create  service  nodeport   ashulb1 --tcp  1234:80 --dry-run=client -o yaml      >customersvc_nodeport.yaml
+```
+
+
+### YAML VIew 
+
+```
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    app: ashulb1
+  name: ashulb1 # name of my internal lb / service 
+spec:
+  ports:
+  - name: 1234-80
+    port: 1234 # internal LB port number 
+    protocol: TCP
+    targetPort: 80 # app port which is running inside POD 
+  selector:
+    app: ashulb1
+  type: NodePort # type of service 
+status:
+  loadBalancer: {}
+
+```
+
+### deploy it 
+
+```
+[ashu@docker-server k8s_app_deploy]$ kubectl  apply -f  customersvc_nodeport.yaml 
+service/ashulb1 created
+[ashu@docker-server k8s_app_deploy]$ kubectl  get  po 
+NAME              READY   STATUS    RESTARTS   AGE
+ashucustomerpod   1/1     Running   0          128m
+[ashu@docker-server k8s_app_deploy]$ kubectl  get  service 
+NAME      TYPE       CLUSTER-IP       EXTERNAL-IP   PORT(S)          AGE
+ashulb1   NodePort   10.103.173.166   <none>        1234:30608/TCP   10s
+[ashu@docker-server k8s_app_deploy]$ 
+
+
+```
+
+### checking label of pods
+
+```
+[ashu@docker-server k8s_app_deploy]$ kubectl  get po --show-labels 
+NAME              READY   STATUS    RESTARTS   AGE    LABELS
+ashucustomerpod   1/1     Running   0          138m   run=ashucustomerpod
+[ashu@docker-server k8s_app_deploy]$ 
+
+```
+
+### changing label apply and check EP 
+
+```
+[ashu@docker-server k8s_app_deploy]$ kubectl apply -f  customersvc_nodeport.yaml 
+service/ashulb1 configured
+[ashu@docker-server k8s_app_deploy]$ kubectl  get svc -o wide
+NAME      TYPE       CLUSTER-IP       EXTERNAL-IP   PORT(S)          AGE   SELECTOR
+ashulb1   NodePort   10.103.173.166   <none>        1234:30608/TCP   13m   run=ashucustomerpod
+[ashu@docker-server k8s_app_deploy]$ kubectl  get ep 
+NAME      ENDPOINTS            AGE
+ashulb1   192.168.166.183:80   13m
+[ashu@docker-server k8s_app_deploy]$ kubectl  get po -o wide
+NAME              READY   STATUS    RESTARTS   AGE    IP                NODE    NOMINATED NODE   READINESS GATES
+ashucustomerpod   1/1     Running   0          142m   192.168.166.183   node1   <none>           <none>
+[ashu@docker-server k8s_app_deploy]$ 
+```
+
+
+
 
 
 
