@@ -291,6 +291,114 @@ ashucustomerpod   1/1     Running   0          142m   192.168.166.183   node1   
 [ashu@docker-server k8s_app_deploy]$ 
 ```
 
+### problems with POD 
+
+<img src="prob1.png">
+
+### to solve problems of POd -- 
+
+<img src="cont.png">
+
+### introduction to Deployment controller in k8s
+
+<img src="dep.png">
+
+### creating deployment 
+
+```
+kubectl create deployment  ashuapp1 --image=docker.io/dockerashu/ashucustomer:v1   --port 80 --dry-run=client -o yaml 
+```
+
+### Understanding yaml 
+
+<img src="dep1.png">
+
+### yaml 
+
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: ashuapp1
+  name: ashuapp1 # name of deployment 
+spec:
+  replicas: 1 # number of pod that will be maintained 
+  selector:
+    matchLabels:
+      app: ashuapp1
+  strategy: {}
+  template: # deploy will use template to create pods 
+    metadata:
+      creationTimestamp: null
+      labels: # label of all my pods by this deployment 
+        app: ashuapp1
+    spec:
+      containers:
+      - image: docker.io/dockerashu/ashucustomer:v1
+        name: ashucustomer
+        ports:
+        - containerPort: 80
+        env: # adding env in deployment 
+        - name: deploy
+          value: webapp1 
+        resources: {}
+status: {}
+
+```
+
+### Deploy it 
+
+```
+ashu@docker-server k8s_app_deploy]$ kubectl apply -f deployment.yaml 
+deployment.apps/ashuapp1 created
+[ashu@docker-server k8s_app_deploy]$ kubectl  get deployment 
+NAME       READY   UP-TO-DATE   AVAILABLE   AGE
+ashuapp1   1/1     1            1           6s
+[ashu@docker-server k8s_app_deploy]$ kubectl  get po
+NAME                        READY   STATUS    RESTARTS   AGE
+ashuapp1-746b946445-hjp65   1/1     Running   0          19s
+[ashu@docker-server k8s_app_deploy]$ kubectl  get po -o wide
+NAME                        READY   STATUS    RESTARTS   AGE   IP                NODE    NOMINATED NODE   READINESS GATES
+ashuapp1-746b946445-hjp65   1/1     Running   0          30s   192.168.166.136   node1   <none>           <none>
+[ashu@docker-server k8s_app_deploy]$ 
+```
+
+### deployment will recreate pod 
+
+```
+kubectl  get  po 
+NAME                        READY   STATUS    RESTARTS   AGE
+ashuapp1-746b946445-hjp65   1/1     Running   0          2m45s
+[ashu@docker-server k8s_app_deploy]$ kubectl delete pod ashuapp1-746b946445-hjp65 
+pod "ashuapp1-746b946445-hjp65" deleted
+[ashu@docker-server k8s_app_deploy]$ kubectl  get  po 
+NAME                        READY   STATUS    RESTARTS   AGE
+ashuapp1-746b946445-d9w9q   1/1     Running   0          42s
+[ashu@docker-server k8s_app_deploy]$ 
+```
+
+### scaling pod horizentally -- 
+
+```
+[ashu@docker-server k8s_app_deploy]$ kubectl  scale deployment  ashuapp1  --replicas=3
+deployment.apps/ashuapp1 scaled
+[ashu@docker-server k8s_app_deploy]$ kubectl  get po -o wide
+NAME                        READY   STATUS              RESTARTS   AGE     IP                NODE    NOMINATED NODE   READINESS GATES
+ashuapp1-746b946445-d9w9q   1/1     Running             0          4m52s   192.168.166.133   node1   <none>           <none>
+ashuapp1-746b946445-f5dsx   0/1     ContainerCreating   0          2s      <none>            node2   <none>           <none>
+ashuapp1-746b946445-f5w29   1/1     Running             0          2s      192.168.166.142   node1   <none>           <none>
+[ashu@docker-server k8s_app_deploy]$ kubectl  get po -o wide
+NAME                        READY   STATUS    RESTARTS   AGE   IP                NODE    NOMINATED NODE   READINESS GATES
+ashuapp1-746b946445-d9w9q   1/1     Running   0          5m    192.168.166.133   node1   <none>           <none>
+ashuapp1-746b946445-f5dsx   1/1     Running   0          10s   192.168.104.63    node2   <none>           <none>
+ashuapp1-746b946445-f5w29   1/1     Running   0          10s   192.168.166.142   node1   <none>           <none>
+[ashu@docker-server k8s_app_deploy]$ kubectl  get deployment 
+NAME       READY   UP-TO-DATE   AVAILABLE   AGE
+ashuapp1   3/3     3            3           8m16s
+```
+
 
 
 
