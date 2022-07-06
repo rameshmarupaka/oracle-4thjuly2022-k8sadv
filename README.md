@@ -399,6 +399,136 @@ NAME       READY   UP-TO-DATE   AVAILABLE   AGE
 ashuapp1   3/3     3            3           8m16s
 ```
 
+### Now deployment with service NodePort 
+
+```
+[ashu@docker-server k8s_app_deploy]$ kubectl apply -f  deployment.yaml 
+deployment.apps/ashuapp1 created
+[ashu@docker-server k8s_app_deploy]$ kubectl  get deploy 
+NAME       READY   UP-TO-DATE   AVAILABLE   AGE
+ashuapp1   1/1     1            1           4s
+[ashu@docker-server k8s_app_deploy]$ kubectl  get po 
+NAME                        READY   STATUS    RESTARTS   AGE
+ashuapp1-746b946445-wwpgk   1/1     Running   0          7s
+[ashu@docker-server k8s_app_deploy]$ kubectl scale deployment  ashuapp1 --replicas=3
+deployment.apps/ashuapp1 scaled
+[ashu@docker-server k8s_app_deploy]$ kubectl  get po 
+NAME                        READY   STATUS    RESTARTS   AGE
+ashuapp1-746b946445-dqv8q   1/1     Running   0          5s
+ashuapp1-746b946445-nk6db   1/1     Running   0          5s
+ashuapp1-746b946445-wwpgk   1/1     Running   0          21s
+[ashu@docker-server k8s_app_deploy]$ kubectl  get po --show-labels 
+NAME                        READY   STATUS    RESTARTS   AGE   LABELS
+ashuapp1-746b946445-dqv8q   1/1     Running   0          38s   app=ashuapp1,pod-template-hash=746b946445
+ashuapp1-746b946445-nk6db   1/1     Running   0          38s   app=ashuapp1,pod-template-hash=746b946445
+ashuapp1-746b946445-wwpgk   1/1     Running   0          54s   app=ashuapp1,pod-template-hash=746b946445
+[ashu@docker-server k8s_app_deploy]$ 
+
+===
+kubectl  create  service  nodeport  ashulb2  --tcp  1234:80 --dry-run=client -o yaml >deploy-svc.yaml 
+
+```
+
+### clean up namespace data 
+
+```
+[ashu@docker-server k8s_app_deploy]$ kubectl  delete  all --all
+pod "ashuapp1-746b946445-dqv8q" deleted
+pod "ashuapp1-746b946445-nk6db" deleted
+pod "ashuapp1-746b946445-wwpgk" deleted
+service "ashulb2" deleted
+deployment.apps "ashuapp1" deleted
+[ashu@docker-server k8s_app_deploy]$ 
+
+
+```
+
+
+### common yaml file 
+
+```
+apiVersion: v1
+kind: Namespace
+metadata:
+  creationTimestamp: null
+  name: test
+spec: {}
+status: {}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels: # label of deployment 
+    app: ashuapp1
+  name: ashuapp1 # name of deployment 
+  namespace: test 
+spec:
+  replicas: 1 # number of pod that will be maintained 
+  selector:
+    matchLabels:
+      app: ashuapp1  
+  strategy: {}
+  template: # deploy will use template to create pods 
+    metadata:
+      creationTimestamp: null
+      labels: # label of all my pods by this deployment 
+        app: ashuapp1
+    spec:
+      containers:
+      - image: docker.io/dockerashu/ashucustomer:v1
+        name: ashucustomer
+        ports:
+        - containerPort: 80
+        env: # adding env in deployment 
+        - name: deploy
+          value: webapp1 
+        resources: {}
+status: {}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    app: ashulb2
+  name: ashulb2
+  namespace: test
+spec:
+  ports:
+  - name: 1234-80
+    port: 1234
+    protocol: TCP
+    targetPort: 80
+  selector: # pod finder filed using label of pods 
+    app: ashuapp1
+  type: NodePort
+status:
+  loadBalancer: {}
+
+```
+
+### 
+
+```
+[ashu@docker-server k8s_app_deploy]$ kubectl apply -f common.yaml 
+namespace/test created
+deployment.apps/ashuapp1 created
+service/ashulb2 created
+[ashu@docker-server k8s_app_deploy]$ kubectl  get  deploy,pod,svc -n test 
+NAME                       READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/ashuapp1   1/1     1            1           11s
+
+NAME                            READY   STATUS    RESTARTS   AGE
+pod/ashuapp1-746b946445-k9sc8   1/1     Running   0          11s
+
+NAME              TYPE       CLUSTER-IP      EXTERNAL-IP   PORT(S)          AGE
+service/ashulb2   NodePort   10.109.162.29   <none>        1234:31762/TCP   11s
+[ashu@docker-server k8s_app_deploy]$ 
+
+```
+
 
 
 
