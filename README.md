@@ -54,3 +54,37 @@ ashulb3   NodePort   10.101.202.0   <none>        1234:30110/TCP   17h
 
 ```
 
+### HPA in k8s 
+
+<img src="hpa.png">
+
+### creating hpa for deployment 
+
+```
+kubectl autoscale deployment ashuwebapp --min=3  --max=20    --cpu-percent 70  --dry-run=client  -o yaml  >hpa.yaml 
+```
+
+### checking it 
+
+```
+[ashu@docker-server ocr-deploy]$ kubectl apply -f hpa.yaml 
+horizontalpodautoscaler.autoscaling/ashuwebapp created
+[ashu@docker-server ocr-deploy]$ kubectl  get deploy 
+NAME         READY   UP-TO-DATE   AVAILABLE   AGE
+ashuwebapp   1/1     1            1           17h
+[ashu@docker-server ocr-deploy]$ kubectl  get deploy 
+NAME         READY   UP-TO-DATE   AVAILABLE   AGE
+ashuwebapp   1/1     1            1           17h
+[ashu@docker-server ocr-deploy]$ kubectl  get po
+NAME                         READY   STATUS    RESTARTS       AGE
+ashuwebapp-878648554-k8tnp   1/1     Running   1 (102m ago)   17h
+[ashu@docker-server ocr-deploy]$ kubectl  get  hpa
+NAME         REFERENCE               TARGETS         MINPODS   MAXPODS   REPLICAS   AGE
+ashuwebapp   Deployment/ashuwebapp   <unknown>/70%   3         20        1          22s
+[ashu@docker-server ocr-deploy]$ kubectl  get  hpa
+NAME         REFERENCE               TARGETS         MINPODS   MAXPODS   REPLICAS   AGE
+ashuwebapp   Deployment/ashuwebapp   <unknown>/70%   3         20        3          40s
+[ashu@docker-server ocr-deploy]$ 
+```
+
+
