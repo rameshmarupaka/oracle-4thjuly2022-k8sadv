@@ -175,6 +175,83 @@ learntechb@cloudshell:~ (us-phoenix-1)$
 
 ```
 
+### deploy dashboard in OKE --
+
+```
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.5.0/aio/deploy/recommended.yaml
+```
+
+###
+
+```
+learntechb@cloudshell:~ (us-phoenix-1)$ kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.5.0/aio/deploy/recommended.yaml
+namespace/kubernetes-dashboard created
+serviceaccount/kubernetes-dashboard created
+service/kubernetes-dashboard created
+secret/kubernetes-dashboard-certs created
+secret/kubernetes-dashboard-csrf created
+secret/kubernetes-dashboard-key-holder created
+configmap/kubernetes-dashboard-settings created
+role.rbac.authorization.k8s.io/kubernetes-dashboard created
+clusterrole.rbac.authorization.k8s.io/kubernetes-dashboard created
+rolebinding.rbac.authorization.k8s.io/kubernetes-dashboard created
+clusterrolebinding.rbac.authorization.k8s.io/kubernetes-dashboard created
+deployment.apps/kubernetes-dashboard created
+service/dashboard-metrics-scraper created
+deployment.apps/dashboard-metrics-scraper created
+learntechb@cloudshell:~ (us-phoenix-1)$ kubectl get ns
+NAME                   STATUS   AGE
+default                Active   22m
+kube-node-lease        Active   22m
+kube-public            Active   22m
+kube-system            Active   22m
+kubernetes-dashboard   Active   7s
+learntechb@cloudshell:~ (us-phoenix-1)$ 
+```
+
+### 
+
+```
+ 522  kubectl -n kubernetes-dashboard  edit svc kubernetes-dashboard
+  523  kubectl -n kubernetes-dashboard  get  svc kubernetes-dashboard  -o yaml >svcback.yaml 
+learntechb@cloudshell:~ (us-phoenix-1)$ 
+learntechb@cloudshell:~ (us-phoenix-1)$ 
+learntechb@cloudshell:~ (us-phoenix-1)$ 
+learntechb@cloudshell:~ (us-phoenix-1)$ kubectl get ns
+NAME                   STATUS   AGE
+default                Active   22m
+kube-node-lease        Active   22m
+kube-public            Active   22m
+kube-system            Active   22m
+kubernetes-dashboard   Active   30s
+learntechb@cloudshell:~ (us-phoenix-1)$ kubectl get deploy -n kubernetes-dashboard
+NAME                        READY   UP-TO-DATE   AVAILABLE   AGE
+dashboard-metrics-scraper   1/1     1            1           43s
+kubernetes-dashboard        1/1     1            1           43s
+learntechb@cloudshell:~ (us-phoenix-1)$ kubectl get po  -n kubernetes-dashboard
+
+learntechb@cloudshell:~ (us-phoenix-1)$ kubectl describe  secret kubernetes-dashboard-token-wz548   -n kubernetes-dashboard
+Name:         kubernetes-dashboard-token-wz548
+Namespace:    kubernetes-dashboard
+Labels:       <none>
+Annotations:  kubernetes.io/service-account.name: kubernetes-dashboard
+              kubernetes.io/service-account.uid: d5667042-5b4d-4798-a431-352f4516572f
+
+Type:  kubernetes.io/service-account-token
+
+Data
+====
+ca.crt:     1285 bytes
+namespace:  20 bytes
+token:      eyJhbGciOiJSUzI1NiIsImtpZCI6InVldjJ1LUxZYnhETDdrQlY4SzlBN3hOQURuaUdXU3VkSmgyU2hWMFItQ0EifQ.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJrdWJlcm5ldGVzLWRhc2hib2FyZCIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VjcmV0Lm5hbWUiOiJrdWJlcm5ldGVzLWRhc2hib2FyZC10b2tlbi13ejU0OCIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50Lm5hbWUiOiJrdWJlcm5ldGVzLWRhc2hib2FyZCIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50LnVpZCI6ImQ1NjY3MDQyLTViNGQtNDc5OC1hNDMxLTM1MmY0NTE2NTcyZiIsInN1YiI6InN5c3RlbTpzZXJ2aWNlYWNjb3VudDprdWJlcm5ldGVzLWRhc2hib2FyZDprdWJlcm5ldGVzLWRhc2hib2FyZCJ9.jv5qrS2AGHbFCnEvvoAJ0PS1UMX362n7sxpDqj9IAORAPTUSx_u8UQp7XrO4fOKttanOc1YyknVmSBWQtuW0a4lK2GG6UxAkdYtoxoqsKTYf82qC42tUUi6l0bty4vCu6KrB7GUg8_AwwClHbkifGyiG8n8Wci-P38RZzGRPsCw7SWZ0rgwCuMMBdOKFIchHs3lWYEeiJUC0lSJVkMI__WpXaj75Xas2TIihZnQ3Bv27BnNT9tNQX_AQiTFPqrhKGVnAB7lFZyfMNqPIysQN25RtDCYzQzciDC0yYYjs2ap3lkwjYDEe_in9d-tJX5b7FWsRi7jGoEaG-Nhnfs9laQ
+learntechb@cloudshell:~ (us-phoenix-1)$ 
+learntechb@cloudshell:~ (us-phoenix-1)$ 
+learntechb@cloudshell:~ (us-phoenix-1)$ kubectl create clusterrolebinding bind1 --clusterrole=cluster-admin --serviceaccount=kubernetes-dashboard:kubernetes-dashboard 
+clusterrolebinding.rbac.authorization.k8s.io/bind1 created
+learntechb@cloudshell:~ (us-phoenix-1)$ 
+
+
+```
 
 
 
