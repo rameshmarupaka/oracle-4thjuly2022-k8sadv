@@ -253,5 +253,85 @@ learntechb@cloudshell:~ (us-phoenix-1)$
 
 ```
 
+###  Ingress controller 
+
+<img src="ingress.png">
+
+### we are going with Nginx ingress controller 
+
+```
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.2.1/deploy/static/provider/baremetal/deploy.yaml
+namespace/ingress-nginx created
+serviceaccount/ingress-nginx created
+serviceaccount/ingress-nginx-admission created
+role.rbac.authorization.k8s.io/ingress-nginx created
+role.rbac.authorization.k8s.io/ingress-nginx-admission created
+clusterrole.rbac.authorization.k8s.io/ingress-nginx created
+clusterrole.rbac.authorization.k8s.io/ingress-nginx-admission created
+rolebinding.rbac.authorization.k8s.io/ingress-nginx created
+rolebinding.rbac.authorization.k8s.io/ingress-nginx-admission created
+clusterrolebinding.rbac.authorization.k8s.io/ingress-nginx created
+clusterrolebinding.rbac.authorization.k8s.io/ingress-nginx-admission created
+configmap/ingress-nginx-controller created
+service/ingress-nginx-controller created
+service/ingress-nginx-controller-admission created
+deployment.apps/ingress-nginx-controller created
+job.batch/ingress-nginx-admission-create created
+job.batch/ingress-nginx-admission-patch created
+ingressclass.networking.k8s.io/nginx created
+validatingwebhookconfiguration.admissionregistration.k8s.io/ingress-nginx-admission created
+[ashu@docker-server ocr-deploy]$ 
+```
+
+### creating cluster IP service to application 
+
+```
+
+[ashu@docker-server ocr-deploy]$ kubectl  get  deploy 
+NAME         READY   UP-TO-DATE   AVAILABLE   AGE
+ashuwebapp   3/3     3            3           21h
+[ashu@docker-server ocr-deploy]$ kubectl  expose deploy  ashuwebapp  --type ClusterIP --port 1234 --target-port 80   --name  ashu-local-lb --dry-run=client -o yaml >clusterip.svc
+[ashu@docker-server ocr-deploy]$ kubectl apply -f clusterip.svc 
+service/ashu-local-lb created
+[ashu@docker-server ocr-deploy]$ kubectl  get  vc
+error: the server doesn't have a resource type "vc"
+[ashu@docker-server ocr-deploy]$ kubectl  get  svc
+NAME            TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)    AGE
+ashu-local-lb   ClusterIP   10.97.90.103   <none>        1234/TCP   7s
+
+
+```
+### ingress yaml 
+
+```
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ashu-app-routing-rule # name of rule 
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  ingressClassName: nginx # nginx ingress 
+  rules:
+  - host: www.ashu.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: ashu-local-lb
+            port:
+              number: 80
+```
+
+### ingress rules 
+
+```
+ashu@docker-server ocr-deploy]$ kubectl  get  ingress
+NAME                    CLASS   HOSTS          ADDRESS        PORTS   AGE
+ashu-app-routing-rule   nginx   www.ashu.com   172.31.16.37   80      6m32s
+[ashu@docker-server ocr-deploy]$ 
+```
 
 
