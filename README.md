@@ -85,6 +85,53 @@ ashuwebapp   Deployment/ashuwebapp   <unknown>/70%   3         20        1      
 NAME         REFERENCE               TARGETS         MINPODS   MAXPODS   REPLICAS   AGE
 ashuwebapp   Deployment/ashuwebapp   <unknown>/70%   3         20        3          40s
 [ashu@docker-server ocr-deploy]$ 
+
 ```
+### for HPA -- we should restrict pod veritical scaling 
+
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: ashuwebapp
+  name: ashuwebapp # name of deployment 
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ashuwebapp
+  strategy: {}
+  template: # for pod creation 
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: ashuwebapp
+    spec:
+      imagePullSecrets: # calling secret to pull image 
+      - name: ashuapp-sec # name of secret used by kubelet on minion side 
+      containers:
+      - image: phx.ocir.io/axmbtg8judkl/ashucustomer:v2
+        name: ashucustomer
+        ports:
+        - containerPort: 80
+        env: # calling / using env data 
+        - name: deploy # from dockerfile name of env 
+          valueFrom: # reading value from somewhere 
+            configMapKeyRef:
+              name: ashucm # name of configmap 
+              key: key1 # key of cm 
+        resources: # limiting vertical scaling in PODs
+          requests:
+            cpu: 100m # 1vcpu == 1000 milicore 
+            memory: 200M
+          limits: 
+            cpu: 300m
+            memory: 500M 
+status: {}
+
+```
+
 
 
