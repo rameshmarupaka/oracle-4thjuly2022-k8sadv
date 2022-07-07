@@ -334,4 +334,87 @@ ashu-app-routing-rule   nginx   www.ashu.com   172.31.16.37   80      6m32s
 [ashu@docker-server ocr-deploy]$ 
 ```
 
+### readiness state 
+
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: ashuwebapp
+  name: ashuwebapp # name of deployment 
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ashuwebapp
+  strategy: {}
+  template: # for pod creation 
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: ashuwebapp
+    spec:
+      imagePullSecrets: # calling secret to pull image 
+      - name: ashuapp-sec # name of secret used by kubelet on minion side 
+      containers:
+      - image: phx.ocir.io/axmbtg8judkl/ashucustomer:v2
+        name: ashucustomer
+        ports:
+        - containerPort: 80
+        env: # calling / using env data 
+        - name: deploy # from dockerfile name of env 
+          valueFrom: # reading value from somewhere 
+            configMapKeyRef:
+              name: ashucm # name of configmap 
+              key: key1 # key of cm 
+        resources: # limiting vertical scaling in PODs
+          requests:
+            cpu: 100m # 1vcpu == 1000 milicore 
+            memory: 200M
+          limits: 
+            cpu: 300m
+            memory: 500M 
+        readinessProbe: # will be used by k8s kubelet for health 
+          httpGet:
+            path: /health.html
+            port: 80
+          initialDelaySeconds: 2 
+          periodSeconds: 10  
+
+status: {}
+
+```
+
+### 
+
+```
+[ashu@docker-server ocr-deploy]$ kubectl apply -f app_deploy.yaml 
+deployment.apps/ashuwebapp configured
+[ashu@docker-server ocr-deploy]$ kubectl  get po 
+NAME                          READY   STATUS        RESTARTS   AGE
+ashuwebapp-7cf98c4984-dk594   1/1     Terminating   0          5h38m
+ashuwebapp-7cf98c4984-mjswq   1/1     Terminating   0          5h38m
+ashuwebapp-7cf98c4984-rc6n4   1/1     Terminating   0          5h41m
+ashuwebapp-d4597489f-hpht6    1/1     Running       0          5s
+[ashu@docker-server ocr-deploy]$ kubectl  get po 
+NAME                         READY   STATUS    RESTARTS   AGE
+ashuwebapp-d4597489f-472sp   1/1     Running   0          82s
+ashuwebapp-d4597489f-hpht6   1/1     Running   0          88s
+ashuwebapp-d4597489f-r49h7   1/1     Running   0          82s
+[ashu@docker-server ocr-deploy]$ kubectl  exec -it ashuwebapp-d4597489f-472sp  -- rm /var/www/html/health.html 
+[ashu@docker-server ocr-deploy]$ kubectl  get po 
+NAME                         READY   STATUS    RESTARTS   AGE
+ashuwebapp-d4597489f-472sp   1/1     Running   0          2m26s
+ashuwebapp-d4597489f-hpht6   1/1     Running   0          2m32s
+ashuwebapp-d4597489f-r49h7   1/1     Running   0          2m26s
+[ashu@docker-server ocr-deploy]$ kubectl  get po 
+NAME                         READY   STATUS    RESTARTS   AGE
+ashuwebapp-d4597489f-472sp   0/1     Running   0          2m35s
+ashuwebapp-d4597489f-hpht6   1/1     Running   0          2m41s
+ashuwebapp-d4597489f-r49h7   1/1     Running   0          2m35s
+```
+
+
 
