@@ -132,6 +132,49 @@ spec:
 status: {}
 
 ```
+### end to end app trace
+
+<img src="appt.png">
+
+### Cloud controller in k8s 
+
+<img src="cloudc.png">
+
+### loadbalancer service 
+
+<img src="lbsvc.png">
+
+### loadbalancer service in OKE --
+
+```
+learntechb@cloudshell:~ (us-phoenix-1)$ cat /etc/os-release 
+NAME="Oracle Linux Server"
+learntechb@cloudshell:~ (us-phoenix-1)$ kubectl get deploy 
+NAME   READY   UP-TO-DATE   AVAILABLE   AGE
+d1     1/1     1            1           50s
+learntechb@cloudshell:~ (us-phoenix-1)$ kubectl expose deploy d1 --type NodePort --port 80 --name lb1
+service/lb1 exposed
+learntechb@cloudshell:~ (us-phoenix-1)$ kubectl get svc
+NAME         TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)        AGE
+kubernetes   ClusterIP   10.96.0.1      <none>        443/TCP        14m
+lb1          NodePort    10.96.35.113   <none>        80:30588/TCP   6s
+learntechb@cloudshell:~ (us-phoenix-1)$ kubectl expose deploy d1 --type LoadBalancer  --port 80 --name lb2
+service/lb2 exposed
+learntechb@cloudshell:~ (us-phoenix-1)$ kubectl get svc
+NAME         TYPE           CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE
+kubernetes   ClusterIP      10.96.0.1       <none>        443/TCP        14m
+lb1          NodePort       10.96.35.113    <none>        80:30588/TCP   50s
+lb2          LoadBalancer   10.96.142.195   <pending>     80:31724/TCP   18s
+learntechb@cloudshell:~ (us-phoenix-1)$ kubectl get svc
+NAME         TYPE           CLUSTER-IP      EXTERNAL-IP      PORT(S)        AGE
+kubernetes   ClusterIP      10.96.0.1       <none>           443/TCP        15m
+lb1          NodePort       10.96.35.113    <none>           80:30588/TCP   104s
+lb2          LoadBalancer   10.96.142.195   129.153.111.84   80:31724/TCP   72s
+learntechb@cloudshell:~ (us-phoenix-1)$ 
+
+
+```
+
 
 
 
