@@ -387,5 +387,109 @@ ashuweblb1   NodePort    10.97.102.14     <none>        80:32000/TCP   5s
 
 ```
 
+### namespace clean up 
+
+```
+[ashu@docker-server images]$ kubectl delete all  --all
+pod "ashudb-789689f45f-bcx2s" deleted
+pod "ashuwebapp-6dd67885c5-fbtrw" deleted
+service "ashudblb1" deleted
+service "ashuweblb1" deleted
+deployment.apps "ashudb" deleted
+deployment.apps "ashuwebapp" deleted
+[ashu@docker-server images]$ kubectl delete cm,sec,pvc   --all
+error: the server doesn't have a resource type "sec"
+[ashu@docker-server images]$ kubectl delete cm,secret,pvc   --all
+configmap "ashudb-cm" deleted
+configmap "kube-root-ca.crt" deleted
+secret "db-cred" deleted
+persistentvolumeclaim "ashu-pvc" deleted
+```
+
+### Helper container 
+
+<img src="helper.png">
+
+### demo 
+
+```
+ kubectl run ashuapp --image=nginx --port 80 --dry-run=client  -o yaml >sidecar.yaml
+```
+
+### yaml 
+
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: ashuapp
+  name: ashuapp # name of pod  
+spec:
+  volumes:
+  - name: ashuvol1
+    emptyDir: {} # temp story on minion node 
+  containers:
+  - image: alpine  # main container 
+    name: ashuc1 
+    volumeMounts:
+    - name: ashuvol1 
+      mountPath: /mnt/data/
+    command: ["sh","-c","while true; date >>/mnt/data/time.txt;sleep 20;done"]
+  - image: nginx # side car container 
+    name: ashuapp
+    ports:
+    - containerPort: 80
+    volumeMounts:
+    - name: ashuvol1
+      mountPath: /usr/share/nginx/html/
+      readOnly: true 
+    resources: {}
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+status: {}
+
+```
+
+###
+
+```
+[ashu@docker-server k8s_app_deploy]$ kubectl  replace -f sidecar.yaml --force 
+pod "ashuapp" deleted
+pod/ashuapp replaced
+[ashu@docker-server k8s_app_deploy]$ kubectl  get  po 
+NAME      READY   STATUS    RESTARTS   AGE
+ashuapp   2/2     Running   0          4s
+[ashu@docker-server k8s_app_deploy]$ kubectl  exec -it  ashuapp -- sh 
+Defaulted container "ashuc1" out of: ashuc1, ashuapp
+/ # 
+/ # cd /mnt/data/
+/mnt/data # ls
+time.txt
+/mnt/data # cat i
+cat: can't open 'i': No such file or directory
+/mnt/data # cat time.txt 
+Fri Jul  8 09:22:07 UTC 2022
+Fri Jul  8 09:22:27 UTC 2022
+Fri Jul  8 09:22:47 UTC 2022
+Fri Jul  8 09:23:07 UTC 2022
+/mnt/data # exit
+```
+
+### access multiple container 
+
+```
+[ashu@docker-server k8s_app_deploy]$ kubectl  exec -it  ashuapp  -c ashuapp     --  bash 
+root@ashuapp:/# cd /usr/share/nginx/html/
+root@ashuapp:/usr/share/nginx/html# ls
+time.txt
+root@ashuapp:/usr/share/nginx/html# rm time.txt 
+rm: cannot remove 'time.txt': Read-only file system
+root@ashuapp:/usr/share/nginx/html# exit
+exit
+```
+
+
 
 
