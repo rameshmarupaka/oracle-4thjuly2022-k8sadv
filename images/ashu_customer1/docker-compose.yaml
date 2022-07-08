@@ -1,0 +1,11 @@
+version: "3.8"
+services:
+  ashuapp1:
+    image: ashucustomer:v1
+    build: .
+    container_name: ashuc1
+    ports: # docker run -p 1234:80 
+    - "1234:80"
+    environment: # docker run -e deploy=webapp2 
+      deploy: webapp1
+    restart: always 

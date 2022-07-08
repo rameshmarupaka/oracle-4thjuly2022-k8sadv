@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels: # label of deployment 
+    app: ashuapp1
+  name: ashuapp1 # name of deployment 
+spec:
+  replicas: 1 # number of pod that will be maintained 
+  selector:
+    matchLabels:
+      app: ashuapp1
+      
+  strategy: {}
+  template: # deploy will use template to create pods 
+    metadata:
+      creationTimestamp: null
+      labels: # label of all my pods by this deployment 
+        app: ashuapp1
+    spec:
+      containers:
+      - image: docker.io/dockerashu/ashucustomer:v1
+        name: ashucustomer
+        ports:
+        - containerPort: 80
+        env: # adding env in deployment 
+        - name: deploy
+          value: webapp1 
+        resources: {}
+status: {}

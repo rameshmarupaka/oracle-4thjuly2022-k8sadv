@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  name: ashudb-cm
+data:
+  MYSQL_USER: oracle
+  MYSQL_DATABASE: ashudb 

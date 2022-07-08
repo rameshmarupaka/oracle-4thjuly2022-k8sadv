@@ -1,0 +1,62 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  creationTimestamp: null
+  name: test
+spec: {}
+status: {}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels: # label of deployment 
+    app: ashuapp1
+  name: ashuapp1 # name of deployment 
+  namespace: test 
+spec:
+  replicas: 1 # number of pod that will be maintained 
+  selector:
+    matchLabels:
+      app: ashuapp1  
+  strategy: {}
+  template: # deploy will use template to create pods 
+    metadata:
+      creationTimestamp: null
+      labels: # label of all my pods by this deployment 
+        app: ashuapp1
+    spec:
+      containers:
+      - image: docker.io/dockerashu/ashucustomer:v1
+        name: ashucustomer
+        ports:
+        - containerPort: 80
+        env: # adding env in deployment 
+        - name: deploy
+          value: webapp1 
+        resources: {}
+status: {}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    app: ashulb2
+  name: ashulb2
+  namespace: test
+spec:
+  ports:
+  - name: 1234-80
+    port: 1234
+    protocol: TCP
+    targetPort: 80
+  selector: # pod finder filed using label of pods 
+    app: ashuapp1
+  type: NodePort
+status:
+  loadBalancer: {}
+
+
+

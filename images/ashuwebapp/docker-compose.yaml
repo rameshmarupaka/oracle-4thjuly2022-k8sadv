@@ -1,0 +1,14 @@
+version: '3.8' # file version 
+services:
+  ashuapp2: 
+    image: alpine # image from docker hub 
+    container_name: ashuc2
+    command: ping www.google.com 
+  ashuapp1: # name of app used by compose 
+    image: ashuapp:imgv3 # name of image to be build
+    build:  # total build details 
+      context: . # location of dockerfile 
+      dockerfile: project.dockerfile # name of dockerfile
+    container_name: ashuc3 
+    ports:
+    - "1239:80"
