@@ -543,7 +543,210 @@ spec:
     - ct
 ```
 
+### packing in k8s 
+
+### analogy 
+<img src="pkg.png">
+
+### Intro to HELM 
+
+<img src="helm.png">
+
+### installig helm in k8s client side 
+
+```
+[root@docker-server ~]# wget  https://get.helm.sh/helm-v3.9.0-linux-amd64.tar.gz
+--2022-07-08 11:05:29--  https://get.helm.sh/helm-v3.9.0-linux-amd64.tar.gz
+Resolving get.helm.sh (get.helm.sh)... 152.195.19.97, 2606:2800:11f:1cb7:261b:1f9c:2074:3c
+Connecting to get.helm.sh (get.helm.sh)|152.195.19.97|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 13952532 (13M) [application/x-tar]
+Saving to: 'helm-v3.9.0-linux-amd64.tar.gz'
+
+100%[======================================================================================>] 13,952,532  --.-K/s   in 0.07s   
+
+2022-07-08 11:05:30 (181 MB/s) - 'helm-v3.9.0-linux-amd64.tar.gz' saved [13952532/13952532]
+
+[root@docker-server ~]# ls
+Dockerfile  helm-v3.9.0-linux-amd64.tar.gz
+[root@docker-server ~]# tar xvf  helm-v3.9.0-linux-amd64.tar.gz 
+linux-amd64/
+linux-amd64/helm
+linux-amd64/LICENSE
+linux-amd64/README.md
+[root@docker-server ~]# ls
+Dockerfile  helm-v3.9.0-linux-amd64.tar.gz  linux-amd64
+[root@docker-server ~]# cd linux-amd64/
+[root@docker-server linux-amd64]# ls
+LICENSE  README.md  helm
+[root@docker-server linux-amd64]# cp helm  /usr/bin/
+[root@docker-server linux-amd64]# helm -v 
+[root@docker-server linux-amd64]# helm -v 
+Error: flag needs an argument: 'v' in -v
+[root@docker-server linux-amd64]# helm version 
+version.BuildInfo{Version:"v3.9.0", GitCommit:"7ceeda6c585217a19a1131663d8cd1f7d641b2a7", GitTreeState:"clean", GoVersion:"go1.17.5"}
+[root@docker-server linux-amd64]# 
+
+```
+
+### demo commands 
+
+### checking repo 
+
+```
+[ashu@docker-server ocr-deploy]$ helm version 
+version.BuildInfo{Version:"v3.9.0", GitCommit:"7ceeda6c585217a19a1131663d8cd1f7d641b2a7", GitTreeState:"clean", GoVersion:"go1.17.5"}
+[ashu@docker-server ocr-deploy]$ helm repo ls
+Error: no repositories to show
+[ashu@docker-server ocr-deploy]$ 
+
+```
+
+### adding repo 
+
+```
+[ashu@docker-server ocr-deploy]$ helm repo add kubernetes-dashboard https://kubernetes.github.io/dashboard/
+"kubernetes-dashboard" has been added to your repositories
+[ashu@docker-server ocr-deploy]$ 
+[ashu@docker-server ocr-deploy]$ helm repo ls
+NAME                    URL                                    
+kubernetes-dashboard    https://kubernetes.github.io/dashboard/
+[ashu@docker-server ocr-deploy]$ 
 
 
+```
+
+### adding more 
+
+```
+[ashu@docker-server ocr-deploy]$ helm repo add bitnami https://charts.bitnami.com/bitnami
+"bitnami" has been added to your repositories
+[ashu@docker-server ocr-deploy]$ helm repo ls
+NAME                    URL                                    
+kubernetes-dashboard    https://kubernetes.github.io/dashboard/
+bitnami                 https://charts.bitnami.com/bitnami     
+[ashu@docker-server ocr-deploy]$ 
+```
+
+### searching for charts in helm repo 
+
+```
+[ashu@docker-server ~]$ helm search  repo  nginx 
+NAME                            	CHART VERSION	APP VERSION	DESCRIPTION                                       
+bitnami/nginx                   	13.1.0       	1.23.0     	NGINX Open Source is a web server that can be a...
+bitnami/nginx-ingress-controller	9.2.17       	1.2.1      	NGINX Ingress Controller is an Ingress controll...
+bitnami/nginx-intel             	2.0.12       	0.4.7      	NGINX Open Source for Intel is a lightweight se...
+bitnami/kong                    	5.0.2        	2.7.0      	Kong is a scalable, open source API layer (aka ...
+[ashu@docker-server ~]$ 
+
+```
+
+### Deploy helm charts 
+
+```
+[ashu@docker-server ~]$ helm search  repo  nginx 
+NAME                            	CHART VERSION	APP VERSION	DESCRIPTION                                       
+bitnami/nginx                   	13.1.0       	1.23.0     	NGINX Open Source is a web server that can be a...
+bitnami/nginx-ingress-controller	9.2.17       	1.2.1      	NGINX Ingress Controller is an Ingress controll...
+bitnami/nginx-intel             	2.0.12       	0.4.7      	NGINX Open Source for Intel is a lightweight se...
+bitnami/kong                    	5.0.2        	2.7.0      	Kong is a scalable, open source API layer (aka ...
+[ashu@docker-server ~]$ 
+[ashu@docker-server ~]$ helm install  ashuchart  bitnami/nginx
+NAME: ashuchart
+LAST DEPLOYED: Fri Jul  8 11:18:27 2022
+NAMESPACE: ashu-apps
+STATUS: deployed
+REVISION: 1
+TEST SUITE: None
+NOTES:
+CHART NAME: nginx
+CHART VERSION: 13.1.0
+APP VERSION: 1.23.0
+
+** Please be patient while the chart is being deployed **
+NGINX can be accessed through the following DNS name from within your cluster:
+
+
+```
+
+
+### checking list of charts deployed via helm 
+
+```
+[ashu@docker-server ~]$ helm ls 
+NAME     	NAMESPACE	REVISION	UPDATED                                	STATUS  	CHART       	APP VERSION
+ashuchart	ashu-apps	1       	2022-07-08 11:18:27.088104789 +0000 UTC	deployed	nginx-13.1.0	1.23.0     
+
+```
+
+### verify by kubectl 
+
+```
+[ashu@docker-server ocr-deploy]$ kubectl  get  deploy 
+NAME              READY   UP-TO-DATE   AVAILABLE   AGE
+ashuchart-nginx   1/1     1            1           100s
+[ashu@docker-server ocr-deploy]$ kubectl  get  rs
+NAME                        DESIRED   CURRENT   READY   AGE
+ashuchart-nginx-65479db5b   1         1         1       108s
+[ashu@docker-server ocr-deploy]$ kubectl  get  po 
+NAME                              READY   STATUS    RESTARTS   AGE
+ashuchart-nginx-65479db5b-n8xqj   1/1     Running   0          111s
+[ashu@docker-server ocr-deploy]$ kubectl  get  svc
+NAME              TYPE           CLUSTER-IP       EXTERNAL-IP   PORT(S)        AGE
+ashuchart-nginx   LoadBalancer   10.108.180.173   <pending>     80:31305/TCP   114s
+[ashu@docker-server ocr-deploy]$ kubectl  get  secret
+NAME                              TYPE                 DATA   AGE
+sh.helm.release.v1.ashuchart.v1   helm.sh/release.v1   1      2m6s
+
+```
+
+
+### deleting chart based deployment 
+
+```
+[ashu@docker-server ~]$ helm uninstall   ashuchart
+release "ashuchart" uninstalled
+[ashu@docker-server ~]$ helm ls
+NAME	NAMESPACE	REVISION	UPDATED	STATUS	CHART	APP VERSION
+[ashu@docker-server ~]$ kubectl  get  deploy 
+No resources found in ashu-apps namespace.
+[ashu@docker-server ~]$ kubectl  get all
+No resources found in ashu-apps namespace.
+[ashu@docker-server ~]$ 
+
+```
+
+
+### downloading chart for analysis purpose 
+
+```
+[ashu@docker-server ~]$ helm pull kubernetes-dashboard/kubernetes-dashboard 
+[ashu@docker-server ~]$ ls
+images  kubernetes-dashboard-5.7.0.tgz  oracle-4thjuly2022-k8sadv  pod.yaml
+[ashu@docker-server ~]$ tar xvf  kubernetes-dashboard-5.7.0.tgz 
+kubernetes-dashboard/Chart.yaml
+kubernetes-dashboard/Chart.lock
+kubernetes-dashboard/values.yaml
+kubernetes-dashboard/te
+```
+
+### creating own charts 
+
+```
+[ashu@docker-server ~]$ helm create  ashu-app-chart
+Creating ashu-app-chart
+[ashu@docker-server ~]$ ls
+ashu-app-chart  images  kubernetes-dashboard  kubernetes-dashboard-5.7.0.tgz  oracle-4thjuly2022-k8sadv  pod.yaml
+[ashu@docker-server ~]$ cd  ashu-app-chart/
+[ashu@docker-server ashu-app-chart]$ ls
+charts  Chart.yaml  templates  values.yaml
+[ashu@docker-server ashu-app-chart]$ ls  templates/
+deployment.yaml  _helpers.tpl  hpa.yaml  ingress.yaml  NOTES.txt  serviceaccount.yaml  service.yaml  tests
+[ashu@docker-server ashu-app-chart]$ cat  templates/deployment.yaml 
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "a
+```
 
 
