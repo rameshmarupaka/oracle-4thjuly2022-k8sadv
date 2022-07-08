@@ -302,6 +302,90 @@ exit
 
 ### webapp to consumse database 
 
+```
+kubectl  create  deployment  ashuwebapp --image=wordpress:4.8-apache --port 80  --dry-run=client -o yaml >webapp.yaml 
+```
+
+### Need 
+
+### service of db
+
+```
+kubectl  expose deployment  ashudb --type ClusterIP --port 3306 --name  ashudblb    --dry-run=client -o yaml >dbsvc.yaml 
+kubectl  apply -f dbsvc.yaml
+[ashu@docker-server multi-tier-app]$ kubectl  get  svc
+NAME        TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)    AGE
+ashudblb1   ClusterIP   10.104.113.212   <none>        3306/TCP   73s
+[ashu@docker-server multi-tier-app]$ 
+```
+
+### YAML of webapp 
+
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: ashuwebapp
+  name: ashuwebapp # name of deployment 
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ashuwebapp
+  strategy: {}
+  template: # template section 
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: ashuwebapp
+    spec:
+      containers:
+      - image: wordpress:4.8-apache
+        name: wordpress
+        ports:
+        - containerPort: 80
+        env: # calling variables 
+        - name: WORDPRESS_DB_HOST 
+          value: ashudblb1 # name of service of Db deployment 
+        - name: WORDPRESS_DB_PASSWORD # root password 
+          valueFrom:
+            secretKeyRef:
+              name: db-cred
+              key: rootpw 
+        resources: {}
+status: {}
+
+```
+
+### apply it 
+
+```
+kubectl apply -f  webapp.yaml
+[ashu@docker-server multi-tier-app]$ kubectl  get deploy 
+NAME         READY   UP-TO-DATE   AVAILABLE   AGE
+ashudb       1/1     1            1           46m
+ashuwebapp   1/1     1            1           3m3s
+```
+
+### creating service for webapp 
+
+```
+[ashu@docker-server multi-tier-app]$ kubectl  get deploy 
+NAME         READY   UP-TO-DATE   AVAILABLE   AGE
+ashudb       1/1     1            1           48m
+ashuwebapp   1/1     1            1           5m19s
+[ashu@docker-server multi-tier-app]$ kubectl  expose deploy ashuwebapp --type NodePort  --port 80 --name ashuweblb1 
+service/ashuweblb1 exposed
+[ashu@docker-server multi-tier-app]$ kubectl  get  svc
+NAME         TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)        AGE
+ashudblb1    ClusterIP   10.104.113.212   <none>        3306/TCP       18m
+ashuweblb1   NodePort    10.97.102.14     <none>        80:32000/TCP   5s
+[ashu@docker-server multi-tier-app]$ 
+
+
+```
 
 
 
